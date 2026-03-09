@@ -1,0 +1,7 @@
+.chat-items {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  /* padding: 10px; */
+  /* height: 100%; */
+}

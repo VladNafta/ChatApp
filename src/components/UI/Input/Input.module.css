@@ -1,0 +1,42 @@
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.input-container label {
+}
+
+.input-container input {
+  padding: 1rem 0.875rem;
+  font-size: 1.2rem;
+  border-radius: 1rem;
+  background-color: var(--sp-blue-700);
+  color: #fff;
+  border: 1.4px solid var(--sp-blue-500);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-container input:focus {
+  border-color: var(--sp-blue-400);
+}
+
+/* Для WebKit-браузерів (Chrome, Safari) */
+input:-webkit-autofill {
+  transition: background-color 50000s ease-in-out 0s,
+    color 50000s ease-in-out 0s !important;
+}
+
+/* Для Firefox */
+input:-moz-autofill {
+  transition: background-color 50000s ease-in-out 0s,
+    color 50000s ease-in-out 0s !important;
+}
+
+/* Для Internet Explorer і Edge */
+input:-ms-autofill {
+  transition: background-color 50000s ease-in-out 0s,
+    color 50000s ease-in-out 0s !important;
+}

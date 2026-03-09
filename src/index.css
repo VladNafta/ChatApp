@@ -1,0 +1,53 @@
+/* @import "tailwindcss"; */
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  background: var(--sp-blue-900);
+  color: rgb(255, 255, 255);
+
+  --sp-blue-900: #18191c;
+  --sp-blue-700: #20242d;
+  --sp-blue-500: #363f54;
+  --sp-blue-400: #64748b;
+  --sp-blue-300: #93a0b9;
+  --sp-blue: #1a5cff;
+  --sp-blue-rgb: 26, 92, 255;
+  --sp-red: rgb(220, 59, 59);
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  outline: none;
+  border: none;
+}
+
+button {
+  display: inline-block;
+  padding: 0;
+  background: none;
+  color: inherit;
+  border: none;
+  cursor: pointer;
+}
+
+.container {
+  max-width: 1080px;
+  width: 100%;
+  padding: 0 1rem;
+  margin: 0 auto;
+}
