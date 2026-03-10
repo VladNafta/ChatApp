@@ -1,9 +1,15 @@
 import classes from "./Message.module.css";
 
-export default function Message({ text }) {
+interface MessageProps {
+  text: string;
+}
+
+const Message = ({ text }: MessageProps) => {
   return (
     <div className={classes.message}>
       <p>{text}</p>
     </div>
   );
-}
+};
+
+export default Message;

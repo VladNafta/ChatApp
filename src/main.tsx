@@ -2,14 +2,14 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
 import "./index.css";
-// import App from "./App.jsx";
+// import App from "./App.tsx";
 
-import HomePage from "./pages/Home/Home.jsx";
-import Header from "./components/Header/Header.jsx";
-import LogIn from "./components/LogIn/LogIn.jsx";
-import SignUp from "./components/SignUp/SignUp.jsx";
+import HomePage from "./pages/Home/Home";
+import Header from "./components/Header/Header";
+import LogIn from "./components/LogIn/LogIn";
+import SignUp from "./components/SignUp/SignUp";
 
-createRoot(document.getElementById("root")).render(
+createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <StrictMode>
       <Routes>

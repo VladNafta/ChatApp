@@ -1,24 +1,25 @@
 import Input from "../UI/Input/Input";
 import classes from "./LogIn.module.css";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import AuthForm from "../AuthForm/AuthForm";
 import { auth } from "../../firebase";
 
-export default function LogIn() {
+const LogIn = () => {
   const [error, setError] = useState({});
 
-  function handleSubmitForm(event) {
+  function handleSubmitForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setError({});
 
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData.entries());
+    const formData = new FormData(event.target as HTMLFormElement);
+    const data = Object.fromEntries(formData.entries()) as {
+      [key: string]: string;
+    };
 
     if (data.password.length <= 7) {
       setError({
-        ...prevState,
         password: "Password must be at least 8 characters long!",
       });
       return;
@@ -38,7 +39,7 @@ export default function LogIn() {
       });
   }
 
-  return (  
+  return (
     <AuthForm
       title="Log in to your account"
       descriptions="Welcome back! Please enter your details."
@@ -66,4 +67,6 @@ export default function LogIn() {
       />
     </AuthForm>
   );
-}
+};
+
+export default LogIn;

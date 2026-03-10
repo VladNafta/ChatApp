@@ -1,7 +1,16 @@
-import Error from "../Error/Error";
+import Error from "../Error/Error.js";
 import cssClass from "./Input.module.css";
 
-export default function Inputs({ id, name, type, label, placeholder, error }) {
+interface InputsProps {
+  id: string;
+  name: string;
+  type: string;
+  label: string;
+  placeholder: string;
+  error: { [key: string]: string };
+}
+
+const Inputs = ({ id, name, type, label, placeholder, error }: InputsProps) => {
   return (
     <div className={cssClass["input-container"]}>
       <label htmlFor={id}>{label}</label>
@@ -15,4 +24,6 @@ export default function Inputs({ id, name, type, label, placeholder, error }) {
       {error[name] && <Error message={error[name]} />}
     </div>
   );
-}
+};
+
+export default Inputs;

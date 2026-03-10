@@ -1,24 +1,30 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import Input from "../UI/Input/Input.jsx";
 import classes from "./SignUp.module.css";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import AuthForm from "../AuthForm/AuthForm.jsx";
 import { auth } from "../../firebase.js";
+import { FirebaseError } from "firebase/app";
 
-export default function SignUp() {
-  const [error, setError] = useState({});
+interface ErrorState {
+  [key: string]: string;
+}
 
-  function handleSubmitForm(event) {
+const SignUp = () => {
+  const [error, setError] = useState<ErrorState>({});
+
+  function handleSubmitForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setError({});
 
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData.entries());
+    const formData = new FormData(event.target as HTMLFormElement);
+    const data = Object.fromEntries(formData.entries()) as {
+      [key: string]: string;
+    };
 
     if (data.password !== data["confirm-password"]) {
       setError({
-        ...prevState,
         password: "The password does not match",
         "confirm-password": "The confirm-password does not match",
       });
@@ -84,4 +90,6 @@ export default function SignUp() {
       />
     </AuthForm>
   );
-}
+};
+
+export default SignUp;
