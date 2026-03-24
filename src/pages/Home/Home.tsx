@@ -3,7 +3,7 @@
 // import classes from "./Home.module.css";
 import ChatItem from "../../components/ChatItem/ChatItem";
 import defaultAvatar from "../../assets/default-avatar2.jpg";
-import Message from "../../components/UI/Message/Message";
+import Message from "../../components/UI/MessageItem/MessageItem";
 
 export default function HomePage() {
   // const navigate = useNavigate();

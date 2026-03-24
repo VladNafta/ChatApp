@@ -1,0 +1,14 @@
+.aside{
+  background-color: var(--sp-blue-700);
+  padding: 0.5rem;
+  /* border-radius: 0.375rem; */
+}
+
+.ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.li {}
+

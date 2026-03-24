@@ -1,17 +1,24 @@
-import { ButtonHTMLAttributes } from "react";
 import classes from "./BlueButton.module.css";
 
-interface BlueButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface BlueButtonProps {
   className?: string;
+  children: React.ReactNode;
+  type?: "button" | "submit" | "reset";
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-const BlueButton: React.FC<BlueButtonProps> = ({
+const BlueButton = ({
   className = "",
   children,
-  ...props
-}) => {
+  type,
+  onClick,
+}: BlueButtonProps) => {
   return (
-    <button className={`${classes.button} ${className}`} {...props}>
+    <button
+      onClick={onClick}
+      className={`${classes.button} ${className}`}
+      type={type}
+    >
       {children}
     </button>
   );

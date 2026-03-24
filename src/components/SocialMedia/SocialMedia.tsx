@@ -1,13 +1,15 @@
 import classes from "./SocialMedia.module.css";
 
-interface ErrorProps {
+interface SocialMediaProps {
   alt: string;
   src: string;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  type?: "submit" | "reset" | "button";
 }
 
-const SocialMedia = ({ src, alt }: ErrorProps) => {
+const SocialMedia = ({ src, alt, onClick, type }: SocialMediaProps) => {
   return (
-    <button className={classes["social-media"]}>
+    <button type={type} onClick={onClick} className={classes["social-media"]}>
       <img src={src} alt={alt} />
     </button>
   );

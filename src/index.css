@@ -24,6 +24,27 @@
   box-sizing: border-box;
 }
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sp-blue-500) rgba(255, 255, 255, 0);
+  -ms-overflow-style: scrollbar;
+}
+
+*::-webkit-scrollbar {
+  width: 0.5rem;
+}
+*::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0);
+  border-radius: 0.5rem;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--sp-blue-500);
+  border-radius: 0.5rem;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--sp-blue-300);
+}
+
 ul,
 ol {
   list-style: none;
@@ -46,7 +67,7 @@ button {
 }
 
 .container {
-  max-width: 1080px;
+  max-width: 160rem;
   width: 100%;
   padding: 0 1rem;
   margin: 0 auto;

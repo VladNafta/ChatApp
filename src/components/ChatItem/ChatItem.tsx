@@ -1,13 +1,12 @@
-import { FC, ImgHTMLAttributes } from "react";
-
 import classes from "./ChatItem.module.css";
 
-interface ChatItemProps extends ImgHTMLAttributes<HTMLImageElement> {
+interface ChatItemProps {
   name: string;
   text: string;
+  src: string;
 }
 
-const ChatItem: FC<ChatItemProps> = ({ name, text, src }) => {
+const ChatItem = ({ name, text, src }: ChatItemProps) => {
   return (
     <div className={classes["chat-item"]}>
       <img src={src} alt={`${name} img`} />

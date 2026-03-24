@@ -1,10 +1,10 @@
-import classes from "./Message.module.css";
+import classes from "./MessageItem.module.css";
 
 interface MessageProps {
   text: string;
 }
 
-const Message = ({ text }: MessageProps) => {
+const MessageItem = ({ text }: MessageProps) => {
   return (
     <div className={classes.message}>
       <p>{text}</p>
@@ -12,4 +12,4 @@ const Message = ({ text }: MessageProps) => {
   );
 };
 
-export default Message;
+export default MessageItem;

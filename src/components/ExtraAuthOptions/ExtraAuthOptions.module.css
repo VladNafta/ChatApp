@@ -1,0 +1,26 @@
+
+.social-medias {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  margin-bottom: 2.8rem;
+}
+/* 
+.sign-up-offer {
+  display: flex;
+  gap: 0.35rem;
+  justify-content: center;
+  font-size: 1.2rem;
+  line-height: 1.4rem;
+}
+
+.sign-up-offer p {
+  color: var(--sp-blue-300);
+  font-weight: 400;
+}
+
+.sign-up-offer button {
+  font-size: 1.2rem;
+  color: var(--sp-blue);
+  font-weight: 500;
+} */

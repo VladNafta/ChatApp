@@ -1,47 +1,23 @@
-// import { useState } from "react";
+// import { useSearchParams } from "react-router";
+// import BlueButton from "../../components/UI/BlueButton/BlueButton";
 
-// import classes from "./Auth.module.css";
-// import Header from "../../components/Header/Header";
-// import LogIn from "../../components/LogIn/LogIn";
-// import SignUp from "../../components/SignUp/SignUp";
+// const AuthPage = () => {
+//   const [searchParams] = useSearchParams();
 
-
-// export default function AuthPage() {
-//   // const [authSection, setAuthSection] = useState("log in");
+//   const isLogin = searchParams.get("mode") === "log-in";
 
 //   return (
-//     <div className="container">
-//       {/* <Header /> */}
-//       {/* <header className={classes.header}>
-//         <div className={classes["logo-area"]}>
-//           <img src={logo} alt="logo" />
-//           <p>Chat app</p>
-//         </div>
-//         <nav>
-//           <ul>
-//             <li>
-//               <button
-//                 onClick={() => setAuthSection("log in")}
-//                 className={classes["log-in-button"]}
-//               >
-//                 Log in
-//               </button>
-//             </li>
-//             <li>
-//               <BlueButton
-//                 onClick={() => setAuthSection("sign up")}
-//                 className={classes["sign-up-button"]}
-//               >
-//                 Sign up
-//               </BlueButton>
-//             </li>
-//           </ul>
-//         </nav>
-//       </header> */}
-//       <main className={classes.main}>
-//         {authSection === "log in" && <LogIn />}
-//         {authSection === "sign up" && <SignUp />}
-//       </main>
-//     </div>
+//     <>
+//       <form className={classes["auth-form"]} onSubmit={onSubmit}>
+//         <h2 className={classes.title}>{title}</h2>
+//         <p className={classes.descriptions}>{descriptions}</p>
+//         <div className={classes.inputs}>{children}</div>
+//         <BlueButton className={classes["submit-button"]}>
+//           {textSubmitBtn}
+//         </BlueButton>
+//       </form>
+//     </>
 //   );
-// }
+// };
+
+// export default AuthPage;
