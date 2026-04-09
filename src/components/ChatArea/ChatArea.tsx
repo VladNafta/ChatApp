@@ -1,29 +1,26 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux-custom-hooks";
+import { subscribeToChatMessages } from "../../store/chat-messages/chat-messages-actions";
+import ChatHeader from "../ChatHeader/ChatHeader";
+import MessageInput from "../MessageInput/MessageInput";
 import MessageItem from "../UI/MessageItem/MessageItem";
 import classes from "./ChatArea.module.css";
-import MessageInput from "../MessageInput/MessageInput";
-import ChatHeader from "../ChatHeader/ChatHeader";
 
-// interface MessagesAreaProps {
-//   messages: {
-//     id: string;
-//     text: string;
-//   }[];
-// }
+const ChatArea = ({ className = "" }) => {
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
+  const messages = useAppSelector((state) => state.chatMessages.messages);
+  const chatId = useAppSelector((state) => state.chatMessages.chatId);
 
-interface Message {
-  id: string;
-  text: string;
-}
-
-const ChatArea = () => {
   const lastMessageRef = useRef<HTMLLIElement>(null);
 
-  const [messages, setMessages] = useState<Message[]>([]);
+  useEffect(() => {
+    if (!chatId) return;
 
-  const handleAddMessage = (message: Message) => {
-    setMessages((prevMessages) => [...prevMessages, message]);
-  };
+    const unsubscribe = dispatch(subscribeToChatMessages(chatId));
+
+    return () => unsubscribe();
+  }, [chatId]);
 
   useEffect(() => {
     if (lastMessageRef.current) {
@@ -31,21 +28,29 @@ const ChatArea = () => {
     }
   }, [messages]);
 
+  console.log(messages);
+
   return (
-    <main className={classes.main}>
-      <ChatHeader name="Vlad" description="lorem lorem lorem lorem" />
-      <ul className={classes.ul}>
-        {messages.map((item, index) => (
-          <li
-            className={classes.li}
-            key={item.id}
-            ref={index === messages.length - 1 ? lastMessageRef : null}
-          >
-            <MessageItem text={item.text} />
-          </li>
-        ))}
-      </ul>
-      <MessageInput className={classes.input} addMessage={handleAddMessage} />
+    <main className={`${classes.main} ${className}`}>
+      {chatId && (
+        <>
+          <ChatHeader name={chatId} description="lorem lorem lorem" />
+          <ul className={classes.ul}>
+            {messages.map((item, index) => (
+              <MessageItem
+                isSenderMessage={user?.uid !== item.senderId}
+                key={item.text}
+                ref={index === messages.length - 1 ? lastMessageRef : null}
+                text={item.text}
+              />
+            ))}
+          </ul>
+          <MessageInput className={classes.input} />
+        </>
+      )}
+      {!chatId && 
+      <h2 className={classes["no-select-chat"]}>Please select chat</h2>
+      }
     </main>
   );
 };

@@ -1,16 +1,21 @@
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { ChangeEvent, FormEvent, useState } from "react";
-import classes from "./MessageInput.module.css";
-import sendImg from "../../assets/send-icon.svg";
 import emojiImg from "../../assets/emoji.png";
 import image from "../../assets/img.png";
+import sendImg from "../../assets/send-icon.svg";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux-custom-hooks";
+import { sendMessage } from "../../store/chat-messages/chat-messages-actions";
+import classes from "./MessageInput.module.css";
 
 interface MessageInputProps {
-  addMessage: (message: { id: string; text: string }) => void;
   className: string;
 }
 
-const MessageInput = ({ addMessage, className }: MessageInputProps) => {
+const MessageInput = ({ className }: MessageInputProps) => {
+  const dispatch = useAppDispatch();
+  const chatId = useAppSelector((state) => state.chatMessages.chatId);
+  const user = useAppSelector((state) => state.auth.user);
+
   const [message, setMessage] = useState("");
   const [openEmoji, setOpenEmoji] = useState(false);
 
@@ -18,15 +23,10 @@ const MessageInput = ({ addMessage, className }: MessageInputProps) => {
     setMessage(event.target.value);
   };
 
-  console.log(openEmoji);
-
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (message.trim()) {
-      addMessage({
-        id: String(Math.random()),
-        text: message,
-      });
+    if (message.trim() && user && user.uid) {
+      dispatch(sendMessage(chatId, user.uid, message));
       console.log("Message sent:", message);
     }
     setMessage("");

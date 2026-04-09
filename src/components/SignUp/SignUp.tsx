@@ -1,21 +1,17 @@
 import { FormEvent, useState } from "react";
-import Input from "../UI/Input/Input.jsx";
-// import classes from "./SignUp.module.css";
 import AuthForm from "../AuthForm/AuthForm.jsx";
-// import { FirebaseError } from "firebase/app";
+import Input from "../UI/Input/Input.jsx";
+import classes from "./SignUp.module.css";
 
-import googleIcon from "../../assets/google-icon.svg";
-import SocialMedia from "../SocialMedia/SocialMedia";
-import {
-  createUserWithEmail,
-  logInWithGoogle,
-} from "../../firebase/firebaseAuth.js";
+import { useAppDispatch } from "../../hooks/redux-custom-hooks.js";
+import { createUserWithEmail } from "../../store/auth/auth-actions.js";
 
 interface ErrorState {
   [key: string]: string;
 }
 
 const SignUp = () => {
+  const dispatch = useAppDispatch();
   const [error, setError] = useState<ErrorState>({});
 
   async function handleSubmitForm(event: FormEvent<HTMLFormElement>) {
@@ -43,17 +39,18 @@ const SignUp = () => {
       });
       return;
     }
-
-    createUserWithEmail({ email: data.email, password: data.password });
+    dispatch(
+      createUserWithEmail({
+        email: data.email,
+        password: data.password,
+      })
+    );
   }
-
-  const handleLogInWithGoogle = () => {
-    logInWithGoogle();
-  };
 
   return (
     <>
       <AuthForm
+        className={classes.form}
         title="Sign up your account"
         descriptions="Welcome! Please enter your details."
         textSubmitBtn="Sign up"
@@ -87,11 +84,6 @@ const SignUp = () => {
           error={error}
         />
       </AuthForm>
-      <SocialMedia
-        onClick={handleLogInWithGoogle}
-        src={googleIcon}
-        alt="google"
-      />
     </>
   );
 };

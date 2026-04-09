@@ -14,7 +14,7 @@
 .input {
   width: 7.5rem;
   font-size: 1.3rem;
-  padding: 1rem;
+  padding: 0.5rem 1rem;
   flex-grow: 1;
   border-radius: 1rem;
   border: 0;
@@ -48,8 +48,8 @@
 }
 
 .btn {
-  height: 3rem;
-  width: 3rem;
+  height: 2.5rem;
+  width: 2.5rem;
   background-color: #fff;
   border-radius: 50%;
   padding: 0.5rem;

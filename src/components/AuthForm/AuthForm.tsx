@@ -1,9 +1,14 @@
 import { Link } from "react-router";
 
+import SocialMedia from "../SocialMedia/SocialMedia";
 import classes from "./AuthForm.module.css";
-import BlueButton from "../UI/BlueButton/BlueButton";
+
+import googleIcon from "../../assets/google-icon.svg";
+import { useAppDispatch } from "../../hooks/redux-custom-hooks";
+import { logInWithGoogle } from "../../store/auth/auth-actions";
 
 interface AuthFormProps {
+  className?: string;
   title: string;
   descriptions: string;
   textSubmitBtn: string;
@@ -14,7 +19,7 @@ interface AuthFormProps {
   offerLink: string;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({
+const AuthForm = ({
   title,
   descriptions,
   textSubmitBtn,
@@ -23,15 +28,34 @@ const AuthForm: React.FC<AuthFormProps> = ({
   offerText,
   offerButtonText,
   offerLink,
-}) => {
+  className = "",
+}: AuthFormProps) => {
+  const dispatch = useAppDispatch();
+
+  const handleLogInWithGoogle = async () => {
+    dispatch(logInWithGoogle());
+  };
   return (
-    <form className={classes["auth-form"]} onSubmit={onSubmit}>
+    <form
+      className={`${classes["auth-form"]} ${className} container`}
+      onSubmit={onSubmit}
+    >
       <h2 className={classes.title}>{title}</h2>
       <p className={classes.descriptions}>{descriptions}</p>
       <div className={classes.inputs}>{children}</div>
-      <BlueButton className={classes["submit-button"]}>
-        {textSubmitBtn}
-      </BlueButton>
+      <button className={classes["submit-button"]}>{textSubmitBtn}</button>
+      <div className={classes.or}>
+        <div className={classes.line}></div>
+        <span>OR</span>
+        <div className={classes.line}></div>
+      </div>
+      <SocialMedia
+        type={"button"}
+        className={classes.google}
+        onClick={handleLogInWithGoogle}
+        src={googleIcon}
+        alt="google"
+      />
       <div className={classes.offer}>
         <p>{offerText}</p>
         <Link to={offerLink} type="button">

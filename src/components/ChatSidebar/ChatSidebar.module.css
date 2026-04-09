@@ -1,14 +1,19 @@
-.aside{
+.aside {
+  display: flex;
+  flex-direction: column;
+  max-width: 17rem;
+
+  gap: 1rem;
   background-color: var(--sp-blue-700);
   padding: 0.5rem;
-  /* border-radius: 0.375rem; */
 }
 
 .ul {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  overflow-y: auto;
 }
 
-.li {}
-
+.li {
+}

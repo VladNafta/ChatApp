@@ -1,9 +1,10 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAD6bCo1Zq6j_NVWEKfC1iiIATy8s5MJno",
+  apiKey: import.meta.env.VITE_API_KEY,
   authDomain: "chatapp-9d17f.firebaseapp.com",
   projectId: "chatapp-9d17f",
   storageBucket: "chatapp-9d17f.firebasestorage.app",
@@ -17,3 +18,4 @@ export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 
 export const db = getFirestore(app);
+export const storage = getStorage(app);

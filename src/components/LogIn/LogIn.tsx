@@ -1,17 +1,14 @@
-import Input from "../UI/Input/Input";
 import { FormEvent, useState } from "react";
 import AuthForm from "../AuthForm/AuthForm";
-// import ExtraAuthOptions from "../ExtraAuthOptions/ExtraAuthOptions";
+import Input from "../UI/Input/Input";
 
-import googleIcon from "../../assets/google-icon.svg";
-import SocialMedia from "../SocialMedia/SocialMedia";
-import {
-  logInWithGoogle,
-  signInUserWithEmail,
-} from "../../firebase/firebaseAuth";
+import { signInUserWithEmail } from "../../store/auth/auth-actions";
+import classes from "./LogIn.module.css";
+import { useAppDispatch } from "../../hooks/redux-custom-hooks";
 
 const LogIn = () => {
   const [error, setError] = useState({});
+  const dispatch = useAppDispatch();
 
   const handleSubmitForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -30,16 +27,18 @@ const LogIn = () => {
       return;
     }
 
-    signInUserWithEmail({ email: data.email, password: data.password });
-  };
-
-  const handleLogInWithGoogle = () => {
-    logInWithGoogle();
+    dispatch(
+      signInUserWithEmail({
+        email: data.email,
+        password: data.password,
+      })
+    );
   };
 
   return (
     <>
       <AuthForm
+        className={classes.form}
         title="Log in to your account"
         descriptions="Welcome back! Please enter your details."
         textSubmitBtn="Sign in"
@@ -65,11 +64,6 @@ const LogIn = () => {
           error={error}
         />
       </AuthForm>
-      <SocialMedia
-        onClick={handleLogInWithGoogle}
-        src={googleIcon}
-        alt="google"
-      />
     </>
   );
 };
