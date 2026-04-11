@@ -25,7 +25,7 @@ export const watchAuthState = () => (dispatch: AppDispatch) => {
     },
     (error) => {
       dispatch(setError(error.message));
-      console.error("Помилка при підписанні на кориистувача: ", error.message);
+      console.error("Помилка при підписанні на користувача: ", error.message);
     }
   );
   return unsubscribe;
@@ -36,7 +36,11 @@ export const logInWithGoogle = () => async (dispatch: AppDispatch) => {
   dispatch(setLoading(true));
   try {
     const response = await signInWithPopup(auth, googleProvider);
-    await addUserToDB(response.user.uid, response.user.email as string);
+    const user = {
+      userName: String(response.user.displayName),
+      email: String(response.user.email),
+    };
+    await addUserToDB(response.user.uid, user);
     dispatch(setLoading(false));
   } catch (error: any) {
     dispatch(setError(String(error.message)));
@@ -45,7 +49,7 @@ export const logInWithGoogle = () => async (dispatch: AppDispatch) => {
 };
 
 export const createUserWithEmail =
-  (userData: { email: string; password: string }) =>
+  (userData: { userName: string; email: string; password: string }) =>
   async (dispatch: AppDispatch) => {
     dispatch(setError(""));
     dispatch(setLoading(true));
@@ -55,7 +59,13 @@ export const createUserWithEmail =
         userData.email,
         userData.password
       );
-      await addUserToDB(response.user.uid, response.user.email as string);
+
+      const user = {
+        userName: userData.userName,
+        email: response.user.email as string,
+      };
+
+      await addUserToDB(response.user.uid, user);
       dispatch(setLoading(false));
     } catch (error: any) {
       dispatch(setError(String(error.message)));

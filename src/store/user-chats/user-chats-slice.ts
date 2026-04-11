@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ChatObjectType, UserChatsStateType } from "./user-chats-type";
+import { UserChatsStateType, UserChatsType } from "./user-chats-type";
 
 const initialState: UserChatsStateType = {
   chats: [],
@@ -11,11 +11,11 @@ const userChatsSlice = createSlice({
   name: "user-chats",
   initialState,
   reducers: {
-    setUserChats: (state, action: PayloadAction<ChatObjectType[]>) => {
+    setUserChats: (state, action: PayloadAction<UserChatsType[]>) => {
       state.chats = action.payload;
     },
 
-    addUserChat: (state, action: PayloadAction<ChatObjectType>) => {
+    addUserChat: (state, action: PayloadAction<UserChatsType>) => {
       state.chats.push(action.payload);
     },
 

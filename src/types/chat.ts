@@ -2,7 +2,7 @@ export type chatObjectType = {
   chatId: string;
   receiverId: string;
   lastMessage: string;
-  updatedAt: string;
+  updatedAt: number;
   isSeen: boolean;
 };
 
@@ -11,5 +11,5 @@ export type messageObjectType = {
   senderId: string;
   text: string;
   image: string;
-  createdAt: string;
+  createdAt: number;
 };

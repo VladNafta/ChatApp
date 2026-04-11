@@ -1,7 +1,8 @@
-import { doc, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import {
-  addToUserChats,
+  addChatToUser,
   checkIfChatExistsInUser,
+  convertUserChats,
   createChat,
 } from "../../firebase/firebase-chat";
 import { db } from "../../firebase/firebase-config";
@@ -13,15 +14,18 @@ export const subscribeToUserChats =
   (userId: string) => (dispatch: AppDispatch) => {
     dispatch(setLoading(true));
 
-    const userChatsDocRef = doc(db, "usersChats", userId);
+    const userChatsCollectionRef = collection(db, "users", userId, "userChats");
 
     const unsubscribe = onSnapshot(
-      userChatsDocRef,
-      (docSnap) => {
-        if (docSnap.exists()) {
-          const userChatsData = docSnap.data();
-          const chatsArray: chatObjectType[] = userChatsData.chats;
-          dispatch(setUserChats(chatsArray));
+      userChatsCollectionRef,
+      async (collectionSnap) => {
+        if (!collectionSnap.empty) {
+          const chatsArray = collectionSnap.docs.map(
+            (doc) => doc.data() as chatObjectType
+          );
+
+          const convertedChatsArray = await convertUserChats(chatsArray);
+          dispatch(setUserChats(convertedChatsArray));
         } else {
           dispatch(setUserChats([]));
         }
@@ -41,18 +45,20 @@ export const addChatToUsers =
   (userId: string, receiverId: string) => async (dispatch: AppDispatch) => {
     dispatch(setLoading(true));
     try {
-      const isChatExistsInUser = await checkIfChatExistsInUser(userId, receiverId);
+      const isChatExistsInUser = await checkIfChatExistsInUser(
+        userId,
+        receiverId
+      );
+      console.log("чи існує.", isChatExistsInUser);
 
-      console.log("hello");
-      
       if (isChatExistsInUser) {
         return;
       }
 
       const chatId = await createChat();
 
-      await addToUserChats(userId, receiverId, chatId);
-      await addToUserChats(receiverId, userId, chatId);
+      await addChatToUser(userId, receiverId, chatId);
+      await addChatToUser(receiverId, userId, chatId);
     } catch (error: any) {
       dispatch(setError(String(error.message)));
       console.error("Помилка додавання чатів:", error.message);

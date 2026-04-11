@@ -25,7 +25,7 @@ const MessageInput = ({ className }: MessageInputProps) => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (message.trim() && user && user.uid) {
+    if (message.trim() && user && user.uid && chatId) {
       dispatch(sendMessage(chatId, user.uid, message));
       console.log("Message sent:", message);
     }

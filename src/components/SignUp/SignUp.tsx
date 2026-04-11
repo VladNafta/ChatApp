@@ -32,15 +32,24 @@ const SignUp = () => {
       return;
     }
 
-    if (data.password.length <= 7) {
+    if (data.password.length < 8) {
       setError({
         password: "Password must be at least 8 characters long!",
         "confirm-password": "Password must be at least 8 characters long!",
       });
       return;
     }
+
+    if (data.userName.length < 4) {
+      setError((prevErrors) => ({
+        ...prevErrors,
+        userName: "Name must be at least 4 characters",
+      }));
+      return;
+    }
     dispatch(
       createUserWithEmail({
+        userName: data.userName,
         email: data.email,
         password: data.password,
       })
@@ -59,6 +68,14 @@ const SignUp = () => {
         offerButtonText="Log in"
         offerLink="/log-in"
       >
+        <Input
+          id="userName"
+          name="userName"
+          label="User name"
+          type="text"
+          placeholder="Enter your name"
+          error={error}
+        />
         <Input
           id="email"
           name="email"

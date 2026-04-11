@@ -1,14 +1,23 @@
 export type UserChatsStateType = {
-  chats: ChatObjectType[];
+  chats: UserChatsType[];
   loading: boolean;
   error: string;
 };
 
-export type ChatObjectType = {
+// export type ChatObjectType = {
+//   chatId: string;
+//   receiverId: string;
+//   lastMessage: string;
+//   updatedAt: string;
+//   isSeen: boolean;
+// };
+
+export type UserChatsType = {
   chatId: string;
-  receiverId: string;
+  userName: string;
+  email: string;
   lastMessage: string;
-  updatedAt: string;
+  updatedAt: number;
   isSeen: boolean;
 };
 

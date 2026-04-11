@@ -1,9 +1,9 @@
 import {
   addDoc,
-  arrayUnion,
   collection,
   doc,
   getDoc,
+  getDocs,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
@@ -14,61 +14,92 @@ export const createChat = async () => {
   const chatsCollectionRef = collection(db, "chats");
   const responseCreateChat = await addDoc(chatsCollectionRef, {
     created: new Date(),
-    message: [],
   });
   return responseCreateChat.id;
 };
 
-export const addToUserChats = async (
+export const addChatToUser = async (
   userId: string,
   receiverId: string,
   chatId: string
 ) => {
-  try {
-    const userChatsDocRef = doc(db, "usersChats", userId);
-    const userChatsDoc = await getDoc(userChatsDocRef);
+  console.log('start');;
 
-    if (!userChatsDoc.exists()) {
-      await setDoc(userChatsDocRef, {
-        chats: [
-          {
-            chatId,
-            receiverId,
-            lastMessage: "",
-            updatedAt: new Date(),
-            isSeen: true,
-          },
-        ],
-      });
-      console.log("Документ створено і додано перший чат.");
-    } else {
-      await updateDoc(userChatsDocRef, {
-        chats: arrayUnion({
-          chatId,
-          receiverId,
-          lastMessage: "",
-          updatedAt: new Date(),
-          isSeen: true,
-        }),
-      });
-      console.log("Додано чат до користувача.");
-    }
-  } catch (error) {
-    console.error("Помилка додавання чату до користувача: ", error);
-  }
+  const userChatDocRef = doc(db, "users", userId, "userChats", chatId);
+
+  await setDoc(userChatDocRef, {
+    chatId,
+    receiverId,
+    lastMessage: "",
+    updatedAt: Date.now(),
+    isSeen: true,
+  });
+  console.log("Документ чату створений.");
+};
+
+export const setLastMessageToUserChat = async (
+  userId: string,
+  chatId: string,
+  lastMessage: string
+) => {
+  const userChatDocRef = doc(db, "users", userId, "userChats", chatId);
+
+  await updateDoc(userChatDocRef, {
+    lastMessage,
+    updatedAt: Date.now(),
+    isSeen: true,
+  });
+};
+
+type ChatObjectType = {
+  chatId: string;
+  receiverId: string;
+  lastMessage: string;
+  updatedAt: number;
+  isSeen: boolean;
 };
 
 export const getUserChats = async (userId: string) => {
-  const userChatsDocRef = doc(db, "usersChats", userId);
-  const userChatsDoc = await getDoc(userChatsDocRef);
-  if (!userChatsDoc.exists()) {
+  const userChatsRef = collection(db, "users", userId, "userChats");
+  
+  const querySnapshot = await getDocs(userChatsRef);
+
+  const chatsArray: ChatObjectType[] = querySnapshot.docs.map(
+    (doc) => doc.data() as ChatObjectType
+  );
+
+  if (chatsArray.length === 0) {
     return [];
   }
 
-  const userChatsData = userChatsDoc.data();
-  const chatsArray: chatObjectType[] = userChatsData.chats;
-
   return chatsArray;
+};
+
+export const convertUserChats = async (chatsArray: chatObjectType[]) => {
+  const newChats = await Promise.all(
+    chatsArray.map(async (chat) => {
+      const userDocRef = doc(db, "users", chat.receiverId);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        return null;
+      }
+
+      const userData = userDoc.data();
+      const email: string = userData.email;
+      const userName: string = userData.userName;
+
+      return {
+        chatId: chat.chatId,
+        email,
+        userName,
+        lastMessage: chat.lastMessage,
+        updatedAt: chat.updatedAt,
+        isSeen: chat.isSeen,
+      };
+    })
+  );
+  return newChats.filter((chat) => chat !== null);
 };
 
 export const checkIfChatExistsInUser = async (
@@ -78,8 +109,9 @@ export const checkIfChatExistsInUser = async (
   if (userId === receiverId) {
     return true;
   }
+  
   const chatsArray = await getUserChats(userId);
-  console.log(chatsArray);
+
   if (chatsArray.length === 0) {
     return false;
   }
@@ -90,10 +122,3 @@ export const checkIfChatExistsInUser = async (
 
   return isChatExists;
 };
-
-// export const sendLastMessageToChat = (
-//   chatId: string,
-//   lastMessage: string
-// ) => {
-
-// };

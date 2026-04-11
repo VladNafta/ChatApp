@@ -1,20 +1,37 @@
-import { arrayUnion, doc, onSnapshot, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  limit,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
-import { messageObjectType } from "../../types/chat";
 import { AppDispatch } from "../store";
 import { setError, setLoading, setMessages } from "./chat-messages-slice";
+import { MessageObjectType } from "./chat-messages-type";
 
 export const subscribeToChatMessages =
   (chatId: string) => (dispatch: AppDispatch) => {
     dispatch(setLoading(true));
-    const usersChatDocRef = doc(db, "chats", chatId);
+    const usersChatCollectionRef = collection(db, "chats", chatId, "messages");
+
+    const userChatsQuery = query(
+      usersChatCollectionRef,
+      orderBy("createdAt", "desc"),
+      limit(20)
+    );
 
     const unsubscribe = onSnapshot(
-      usersChatDocRef,
-      (docSnap) => {
-        if (docSnap.exists()) {
-          const userChatData = docSnap.data();
-          const messageArray: messageObjectType[] = userChatData.message;
+      userChatsQuery,
+      (collectionSnap) => {
+        if (!collectionSnap.empty) {
+          const messageArray = collectionSnap.docs.map(
+            (doc) => doc.data() as MessageObjectType
+          );
+          
+          messageArray.reverse(); 
+
           dispatch(setMessages(messageArray));
         } else {
           dispatch(setMessages([]));
@@ -22,8 +39,8 @@ export const subscribeToChatMessages =
         dispatch(setLoading(false));
       },
       (error) => {
-        dispatch(setError(error.message));
         console.error("Помилка підписки на повідомлення чату: ", error.message);
+        dispatch(setError(error.message));
         dispatch(setLoading(false));
       }
     );
@@ -32,27 +49,32 @@ export const subscribeToChatMessages =
   };
 
 export const sendMessage =
-  (chatId: string | null, senderId: string, text: string) =>
+  (chatId: string, senderId: string, text: string) =>
   async (dispatch: AppDispatch) => {
     dispatch(setLoading(true));
     try {
-      if (chatId === null) {
-        throw Error("Chat id is null");
-      }
-
-      const chatDocRef = doc(db, "chats", chatId);
+      const chatMessagesCollectionRef = collection(
+        db,
+        "chats",
+        chatId,
+        "messages"
+      );
       const newMessage = {
+        chatId,
         senderId,
         text,
-        createdAt: new Date(),
+        createdAt: Date.now(),
       };
-      await updateDoc(chatDocRef, {
-        message: arrayUnion(newMessage),
-      });
+
+      const response = await addDoc(chatMessagesCollectionRef, newMessage);
+      return response.id;
     } catch (error: any) {
       dispatch(setError(String(error.message)));
-      console.error("Помилка при вході через Google:", error.message);
+      console.error("Помилка надсилання повідомлення:", error.message);
     } finally {
       dispatch(setLoading(false));
     }
   };
+
+//сортування повідомлень по часу
+//збереження дати не у вигляді цілого обєкта

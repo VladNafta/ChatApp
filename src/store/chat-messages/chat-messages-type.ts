@@ -3,7 +3,7 @@ export type MessageObjectType = {
   senderId: string;
   text: string;
   image: string;
-  createdAt: string;
+  createdAt: number;
 };
 
 export type ChatMessagesStateType = {

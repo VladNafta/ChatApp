@@ -5,6 +5,7 @@ interface MessageProps {
   className?: string;
   ref: React.Ref<HTMLLIElement>;
   isSenderMessage: boolean;
+  createdAt: number;
 }
 
 const MessageItem = ({
@@ -12,9 +13,11 @@ const MessageItem = ({
   className = "",
   ref,
   isSenderMessage,
+  createdAt,
 }: MessageProps) => {
-  const hours = new Date().getHours();
-  const minutes = new Date().getMinutes();
+  const date = new Date(createdAt);
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
 
   let messageClass = `${classes.message} ${className}`;
   if (isSenderMessage) {

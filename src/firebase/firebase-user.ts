@@ -22,7 +22,18 @@ export const getUserIdByEmail = async (email: string) => {
   return usersId;
 };
 
-export const addUserToDB = async (userId: string, email: string) => {
+// type UserData = {
+//   email: string;
+//   name: string;
+// };
+
+export const addUserToDB = async (
+  userId: string,
+  user: {
+    userName: string;
+    email: string;
+  }
+) => {
   const userDocRef = doc(db, "users", userId);
   const userDoc = await getDoc(userDocRef);
 
@@ -31,7 +42,7 @@ export const addUserToDB = async (userId: string, email: string) => {
   }
 
   await setDoc(userDocRef, {
-    email,
+    ...user,
   });
 
   console.log("Користувача додано до бази даних");
