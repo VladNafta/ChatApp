@@ -29,7 +29,7 @@ const ChatItem = ({
   const date = new Date(updatedAt);
   console.log();
   let dateToDisplay = "";
-  if (currentDate.toDateString === date.toDateString) {
+  if (currentDate.toDateString() === date.toDateString()) {
     const hours = date.getHours().toString().padStart(2, "0");
     const minutes = date.getMinutes().toString().padStart(2, "0");
     dateToDisplay = `${hours}:${minutes}`;

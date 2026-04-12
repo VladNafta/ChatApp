@@ -2,16 +2,16 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.input-container label {
   font-size: 1.2rem;
 }
 
-/* .input-container label {
-} */
-
 .input-container input {
-  padding: 1rem 0.875rem;
-  font-size: 1.2rem;
-  border-radius: 1rem;
+  padding: 0.75rem 0.875rem;
+  font-size: 1rem;
+  border-radius: 0.6rem;
   background-color: var(--sp-blue-700);
   color: #fff;
   border: 1.4px solid var(--sp-blue-500);

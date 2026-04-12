@@ -1,8 +1,6 @@
 .aside {
   display: flex;
   flex-direction: column;
-  max-width: 17rem;
-
   gap: 1rem;
   background-color: var(--sp-blue-700);
   padding: 0.5rem;
@@ -15,5 +13,5 @@
   overflow-y: auto;
 }
 
-.li {
-}
+/* .li {
+} */
