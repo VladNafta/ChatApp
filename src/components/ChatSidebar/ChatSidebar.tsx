@@ -49,6 +49,7 @@ const ChatSidebar = ({ className = "" }: ChatSidebarProps) => {
             name={chat.userName}
             text={chat.lastMessage}
             className={classes.li}
+            updatedAt={chat.updatedAt}
             key={chat.chatId}
           />
         ))}
