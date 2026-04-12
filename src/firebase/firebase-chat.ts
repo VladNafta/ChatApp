@@ -23,7 +23,7 @@ export const addChatToUser = async (
   receiverId: string,
   chatId: string
 ) => {
-  console.log('start');;
+  console.log("start");
 
   const userChatDocRef = doc(db, "users", userId, "userChats", chatId);
 
@@ -40,14 +40,14 @@ export const addChatToUser = async (
 export const setLastMessageToUserChat = async (
   userId: string,
   chatId: string,
-  lastMessage: string
+  lastMessage: string,
 ) => {
   const userChatDocRef = doc(db, "users", userId, "userChats", chatId);
 
   await updateDoc(userChatDocRef, {
-    lastMessage,
     updatedAt: Date.now(),
     isSeen: true,
+    lastMessage,
   });
 };
 
@@ -61,7 +61,7 @@ type ChatObjectType = {
 
 export const getUserChats = async (userId: string) => {
   const userChatsRef = collection(db, "users", userId, "userChats");
-  
+
   const querySnapshot = await getDocs(userChatsRef);
 
   const chatsArray: ChatObjectType[] = querySnapshot.docs.map(
@@ -93,6 +93,7 @@ export const convertUserChats = async (chatsArray: chatObjectType[]) => {
         chatId: chat.chatId,
         email,
         userName,
+        receiverId: chat.receiverId,
         lastMessage: chat.lastMessage,
         updatedAt: chat.updatedAt,
         isSeen: chat.isSeen,
@@ -109,7 +110,7 @@ export const checkIfChatExistsInUser = async (
   if (userId === receiverId) {
     return true;
   }
-  
+
   const chatsArray = await getUserChats(userId);
 
   if (chatsArray.length === 0) {

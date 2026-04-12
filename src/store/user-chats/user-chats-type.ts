@@ -14,6 +14,7 @@ export type UserChatsStateType = {
 
 export type UserChatsType = {
   chatId: string;
+  receiverId: string;
   userName: string;
   email: string;
   lastMessage: string;

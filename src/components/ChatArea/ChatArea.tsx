@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { setLastMessageToUserChat } from "../../firebase/firebase-chat";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-custom-hooks";
 import { subscribeToChatMessages } from "../../store/chat-messages/chat-messages-actions";
 import ChatHeader from "../ChatHeader/ChatHeader";
@@ -30,14 +29,6 @@ const ChatArea = ({ className = "" }) => {
     if (lastMessageRef.current) {
       lastMessageRef.current.scrollIntoView({ behavior: "auto" });
     }
-    if (user && chatId && messages.length > 0) {
-      setLastMessageToUserChat(
-        user.uid,
-        chatId,
-        "",
-        // String(currentChatData?.lastMessage)
-      );
-    }
   }, [messages]);
 
   return (
@@ -45,7 +36,7 @@ const ChatArea = ({ className = "" }) => {
       {chatId && (
         <>
           <ChatHeader
-            name={currentChatData!.userName}
+            name={String(currentChatData?.userName)}
             description="lorem lorem lorem"
           />
           <ul className={classes.ul}>

@@ -3,6 +3,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import emojiImg from "../../assets/emoji.png";
 import image from "../../assets/img.png";
 import sendImg from "../../assets/send-icon.svg";
+import { setLastMessageToUserChat } from "../../firebase/firebase-chat";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-custom-hooks";
 import { sendMessage } from "../../store/chat-messages/chat-messages-actions";
 import classes from "./MessageInput.module.css";
@@ -14,10 +15,13 @@ interface MessageInputProps {
 const MessageInput = ({ className }: MessageInputProps) => {
   const dispatch = useAppDispatch();
   const chatId = useAppSelector((state) => state.chatMessages.chatId);
+  const chats = useAppSelector((state) => state.userChats.chats);
   const user = useAppSelector((state) => state.auth.user);
 
   const [message, setMessage] = useState("");
   const [openEmoji, setOpenEmoji] = useState(false);
+
+  const currentChatData = chats.find((chat) => chat.chatId === chatId);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
@@ -25,8 +29,10 @@ const MessageInput = ({ className }: MessageInputProps) => {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (message.trim() && user && user.uid && chatId) {
+    if (message.trim() && user && user.uid && chatId && currentChatData) {
       dispatch(sendMessage(chatId, user.uid, message));
+      setLastMessageToUserChat(user.uid, chatId, message);
+      setLastMessageToUserChat(currentChatData.receiverId, chatId, message);
       console.log("Message sent:", message);
     }
     setMessage("");

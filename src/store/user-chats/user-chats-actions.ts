@@ -1,4 +1,4 @@
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import {
   addChatToUser,
   checkIfChatExistsInUser,
@@ -16,14 +16,17 @@ export const subscribeToUserChats =
 
     const userChatsCollectionRef = collection(db, "users", userId, "userChats");
 
-    const unsubscribe = onSnapshot(
+    const userChatsCollectionQuery = query(
       userChatsCollectionRef,
+      orderBy("updatedAt", "desc")
+    );
+    const unsubscribe = onSnapshot(
+      userChatsCollectionQuery,
       async (collectionSnap) => {
         if (!collectionSnap.empty) {
           const chatsArray = collectionSnap.docs.map(
             (doc) => doc.data() as chatObjectType
           );
-
           const convertedChatsArray = await convertUserChats(chatsArray);
           dispatch(setUserChats(convertedChatsArray));
         } else {
