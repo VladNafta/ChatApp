@@ -4,6 +4,7 @@ import { ChatMessagesStateType, MessageObjectType } from "./chat-messages-type";
 const initialState: ChatMessagesStateType = {
   chatId: null,
   messages: [],
+  lastDocId: null,
   loading: false,
   error: "",
 };
@@ -12,17 +13,28 @@ const chatMessageSlice = createSlice({
   name: "chat-messages",
   initialState,
   reducers: {
-    setChatId: (state, actions: PayloadAction<string | null>) => {
-      state.chatId = actions.payload;
+    setChatId: (state, action: PayloadAction<string | null>) => {
+      state.chatId = action.payload;
       state.messages = [];
     },
 
-    setMessages: (state, actions: PayloadAction<MessageObjectType[]>) => {
-      state.messages = actions.payload;
+    setMessages: (state, action: PayloadAction<MessageObjectType[]>) => {
+      state.messages.push(...action.payload);
     },
 
-    addMessage: (state, actions: PayloadAction<MessageObjectType>) => {
-      state.messages.push(actions.payload);
+    addPrevMessages: (
+      state,
+      action: PayloadAction<{ messages: MessageObjectType[]; chatId: string }>
+    ) => {
+      if (state.chatId === action.payload.chatId) {
+        state.messages.unshift(...action.payload.messages);
+      }
+    },
+
+    setLastDoc: (state, action:  PayloadAction<{ lastDocId: string; chatId: string }>) => {
+      if (state.chatId === action.payload.chatId) {
+        state.lastDocId = action.payload.lastDocId;
+      }
     },
 
     setLoading: (state, action: PayloadAction<boolean>) => {
@@ -35,6 +47,12 @@ const chatMessageSlice = createSlice({
   },
 });
 
-export const { setChatId, setMessages, addMessage, setLoading, setError } =
-  chatMessageSlice.actions;
+export const {
+  setChatId,
+  setMessages,
+  addPrevMessages,
+  setLastDoc,
+  setLoading,
+  setError,
+} = chatMessageSlice.actions;
 export default chatMessageSlice.reducer;

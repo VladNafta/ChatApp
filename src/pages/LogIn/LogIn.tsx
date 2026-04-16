@@ -1,10 +1,10 @@
 import { FormEvent, useState } from "react";
-import AuthForm from "../AuthForm/AuthForm";
-import Input from "../UI/Input/Input";
+import AuthForm from "../../components/AuthForm/AuthForm";
+import Input from "../../components/UI/Input/Input";
 
+import { useAppDispatch } from "../../hooks/redux-custom-hooks";
 import { signInUserWithEmail } from "../../store/auth/auth-actions";
 import classes from "./LogIn.module.css";
-import { useAppDispatch } from "../../hooks/redux-custom-hooks";
 
 const LogIn = () => {
   const [error, setError] = useState({});

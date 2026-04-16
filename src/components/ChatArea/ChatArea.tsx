@@ -1,6 +1,9 @@
 import { useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-custom-hooks";
-import { subscribeToChatMessages } from "../../store/chat-messages/chat-messages-actions";
+import {
+  downloadPrevMessages,
+  subscribeToChatMessages,
+} from "../../store/chat-messages/chat-messages-actions";
 import ChatHeader from "../ChatHeader/ChatHeader";
 import MessageInput from "../MessageInput/MessageInput";
 import MessageItem from "../UI/MessageItem/MessageItem";
@@ -11,10 +14,17 @@ const ChatArea = ({ className = "" }) => {
   const chats = useAppSelector((state) => state.userChats.chats);
   const user = useAppSelector((state) => state.auth.user);
   const messages = useAppSelector((state) => state.chatMessages.messages);
+  const lastDocId = useAppSelector((state) => state.chatMessages.lastDocId);
+  const prevMessagesLoading = useAppSelector(
+    (state) => state.chatMessages.loading
+  );
   const chatId = useAppSelector((state) => state.chatMessages.chatId);
 
   const currentChatData = chats.find((chat) => chat.chatId === chatId);
+  const isDownloadedNewMessageRef = useRef(false);
 
+  const firstMessageRef = useRef<HTMLLIElement>(null);
+  const prevFirstMessageRef = useRef<HTMLLIElement>(null);
   const lastMessageRef = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
@@ -26,29 +36,69 @@ const ChatArea = ({ className = "" }) => {
   }, [chatId]);
 
   useEffect(() => {
-    if (lastMessageRef.current) {
+    if (lastMessageRef.current && !isDownloadedNewMessageRef.current) {
       lastMessageRef.current.scrollIntoView({ behavior: "auto" });
+    } else if (prevFirstMessageRef.current) {
+      prevFirstMessageRef.current.scrollIntoView({ behavior: "auto" });
     }
+    isDownloadedNewMessageRef.current = false;
   }, [messages]);
 
+  useEffect(() => {
+    console.log(chatId);
+    if (
+      firstMessageRef.current === null ||
+      chatId === null ||
+      lastDocId === null
+    ) {
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !prevMessagesLoading) {
+          dispatch(downloadPrevMessages(chatId, lastDocId));
+          isDownloadedNewMessageRef.current = true;
+        }
+      },
+      { root: null, rootMargin: "0px", threshold: 0 }
+    );
+
+    observer.observe(firstMessageRef.current);
+
+    return () => {
+      if (firstMessageRef.current) {
+        observer.unobserve(firstMessageRef.current);
+      }
+    };
+  }, [chatId, firstMessageRef.current, lastDocId]);
+
   return (
-    <main className={`${classes.main} ${className}`}>
+    <main key={chatId} className={`${classes.main} ${className}`}>
       {chatId && (
         <>
           <ChatHeader
             name={String(currentChatData?.userName)}
             description="lorem lorem lorem"
           />
-          <ul className={classes.ul}>
-            {messages.map((item, index) => (
-              <MessageItem
-                isSenderMessage={user?.uid !== item.senderId}
-                key={item.createdAt}
-                ref={index === messages.length - 1 ? lastMessageRef : null}
-                text={item.text}
-                createdAt={item.createdAt}
-              />
-            ))}
+          <ul className={classes.ul} onScroll={(e) => e.preventDefault()}>
+            {messages.map((item, index) => {
+              prevFirstMessageRef.current = firstMessageRef.current;
+              return (
+                <MessageItem
+                  isSenderMessage={user?.uid !== item.senderId}
+                  key={item.createdAt}
+                  ref={
+                    index === 0
+                      ? firstMessageRef
+                      : index === messages.length - 1
+                      ? lastMessageRef
+                      : null
+                  }
+                  text={item.text}
+                  createdAt={item.createdAt}
+                />
+              );
+            })}
           </ul>
           <MessageInput className={classes.input} />
         </>

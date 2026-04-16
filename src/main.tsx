@@ -6,8 +6,8 @@ import "./index.css";
 import HomePage from "./pages/Home/Home";
 import { store } from "./store/store";
 
-import LogIn from "./components/LogIn/LogIn";
-import SignUp from "./components/SignUp/SignUp";
+import SignUp from "./pages/SignUp/SignUp";
+import LogIn from "./pages/LogIn/LogIn";
 import ChatPage from "./pages/Chat/Chat";
 import HeaderLayout from "./pages/HeaderLayout/HeaderLayout";
 

@@ -1,6 +1,6 @@
 import { FormEvent, useState } from "react";
-import AuthForm from "../AuthForm/AuthForm.jsx";
-import Input from "../UI/Input/Input.jsx";
+import AuthForm from "../../components/AuthForm/AuthForm";
+import Input from "../../components/UI/Input/Input";
 import classes from "./SignUp.module.css";
 
 import { useAppDispatch } from "../../hooks/redux-custom-hooks.js";

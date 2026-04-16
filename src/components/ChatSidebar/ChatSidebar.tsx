@@ -16,6 +16,7 @@ const ChatSidebar = ({ className = "" }: ChatSidebarProps) => {
   const chats = useAppSelector((state) => state.userChats.chats);
   const chatId = useAppSelector((state) => state.chatMessages.chatId);
   const user = useAppSelector((state) => state.auth.user);
+  const chatMessagesLoading = useAppSelector((state) => state.chatMessages.loading);
 
   const dispatch = useAppDispatch();
 
@@ -27,8 +28,8 @@ const ChatSidebar = ({ className = "" }: ChatSidebarProps) => {
     return () => unsubscribe();
   }, [user]);
 
-  const handleChatClick = (newChatId: string) => {
-    if (chatId === newChatId) {
+  const handleChatSelect = (newChatId: string) => {
+    if (chatId === newChatId && !chatMessagesLoading) {
       dispatch(setChatId(null));
       return;
     }
@@ -44,7 +45,7 @@ const ChatSidebar = ({ className = "" }: ChatSidebarProps) => {
           <ChatItem
             chatId={chat.chatId}
             selectedChatId={chatId}
-            onClick={() => handleChatClick(chat.chatId)}
+            onClick={() => handleChatSelect(chat.chatId)}
             src={defaultAvatar}
             name={chat.userName}
             text={chat.lastMessage}

@@ -27,7 +27,6 @@ const ChatItem = ({
   }
   const currentDate = new Date();
   const date = new Date(updatedAt);
-  console.log();
   let dateToDisplay = "";
   if (currentDate.toDateString() === date.toDateString()) {
     const hours = date.getHours().toString().padStart(2, "0");

@@ -9,6 +9,7 @@ export type MessageObjectType = {
 export type ChatMessagesStateType = {
   chatId: string | null;
   messages: MessageObjectType[];
+  lastDocId: string | null,
   loading: boolean;
   error: string;
 };
