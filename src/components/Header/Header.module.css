@@ -1,6 +1,7 @@
 .header {
   display: flex;
   justify-content: space-between;
+  height: 4.5rem;
   align-items: center;
   border: 1.4px solid var(--sp-blue-500);
   border-top: none;
@@ -96,6 +97,9 @@
 }
 
 @media (max-width: 768px) {
+  .header {
+    height: 3.5rem;
+  }
 
   .logo-area img {
     height: 2rem;
