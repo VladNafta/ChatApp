@@ -41,10 +41,11 @@ export const logInWithGoogle = () => async (dispatch: AppDispatch) => {
       email: String(response.user.email),
     };
     await addUserToDB(response.user.uid, user);
-    dispatch(setLoading(false));
   } catch (error: any) {
     dispatch(setError(String(error.message)));
     console.error("Помилка при вході через Google:", error.message);
+  } finally {
+    dispatch(setLoading(false));
   }
 };
 
@@ -66,10 +67,11 @@ export const createUserWithEmail =
       };
 
       await addUserToDB(response.user.uid, user);
-      dispatch(setLoading(false));
     } catch (error: any) {
       dispatch(setError(String(error.message)));
       console.error("Помилка при створенні користувача:", error.message);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
@@ -80,11 +82,11 @@ export const signInUserWithEmail =
     dispatch(setLoading(true));
     try {
       await signInWithEmailAndPassword(auth, userData.email, userData.password);
-
-      dispatch(setLoading(false));
     } catch (error: any) {
       dispatch(setError(String(error.message)));
       console.error("Помилка при вході через email:", error.message);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 

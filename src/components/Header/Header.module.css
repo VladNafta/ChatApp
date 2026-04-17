@@ -111,8 +111,9 @@
   }
 
   .log-in-button {
-    padding: 0.5rem 0.75rem;
     font-size: 1rem;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
   }
 
   .sign-up-button {
