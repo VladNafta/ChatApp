@@ -21,7 +21,7 @@ import {
 } from "./chat-messages-slice";
 import { MessageObjectType } from "./chat-messages-type";
 
-const messagesLimit = 10;
+const messagesLimit = 40;
 
 export const subscribeToChatMessages =
   (chatId: string) => (dispatch: AppDispatch) => {

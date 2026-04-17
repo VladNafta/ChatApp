@@ -15,6 +15,7 @@ const chatMessageSlice = createSlice({
   reducers: {
     setChatId: (state, action: PayloadAction<string | null>) => {
       state.chatId = action.payload;
+      state.lastDocId = null;
       state.messages = [];
     },
 

@@ -1,6 +1,5 @@
 .header {
   display: flex;
-  height: 4.5rem;
   justify-content: space-between;
   align-items: center;
   border: 1.4px solid var(--sp-blue-500);
@@ -94,4 +93,38 @@
 .profile img {
   width: 100%;
   height: 100%;
+}
+
+@media (max-width: 768px) {
+
+  .logo-area img {
+    height: 2rem;
+    width: 2rem;
+  }
+
+  .logo-area h1 {
+    font-size: 1.2rem;
+  }
+
+  .log-in-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+  }
+
+  .sign-up-button {
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .log-out-button {
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .profile {
+    width: 2rem;
+    height: 2rem;
+  }
 }
