@@ -2,8 +2,6 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  /* height: 100%; */
-  /* width: 100%; */
   background-color: var(--sp-blue-700);
   border-radius: 0.375rem;
 }

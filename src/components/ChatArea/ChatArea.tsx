@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { ClipLoader } from "react-spinners";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-custom-hooks";
 import {
   downloadPrevMessages,
@@ -79,6 +80,16 @@ const ChatArea = ({ className = "" }) => {
           <ChatHeader
             name={String(currentChatData?.userName)}
             description="lorem lorem lorem"
+          />
+          <ClipLoader
+            cssOverride={{
+              position: "absolute",
+              left: "50%",
+              top: "4rem",
+            }}
+            size={16}
+            color="#363f54"
+            loading={prevMessagesLoading}
           />
           <ul className={classes.ul} onScroll={(e) => e.preventDefault()}>
             {messages.map((item, index) => {
