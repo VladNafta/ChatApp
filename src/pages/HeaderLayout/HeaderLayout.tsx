@@ -20,12 +20,13 @@ const HeaderLayout = () => {
   const { user, loading } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    if (!loading && !user && pathname !== "/sign-up") {
+    console.log(user?.emailVerified);
+    if (!loading && !user?.emailVerified && pathname !== "/sign-up") {
       navigate("/log-in");
     } else if (user) {
       navigate("/chat");
     }
-  }, [loading, user, navigate]);
+  }, [loading, user?.emailVerified, navigate]);
 
   if (loading) {
     return (

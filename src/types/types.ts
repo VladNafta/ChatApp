@@ -13,3 +13,10 @@ export type messageObjectType = {
   image: string;
   createdAt: number;
 };
+
+export type UserType = {
+  userName: string | null;
+  email: string | null;
+  phoneNumber: string | null;
+  photoURL: string | null;
+};

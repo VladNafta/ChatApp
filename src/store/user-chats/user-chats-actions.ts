@@ -6,7 +6,7 @@ import {
   createChat,
 } from "../../firebase/firebase-chat";
 import { db } from "../../firebase/firebase-config";
-import { chatObjectType } from "../../types/chat";
+import { chatObjectType } from "../../types/types";
 import { AppDispatch } from "../store";
 import { setError, setLoading, setUserChats } from "./user-chats-slice";
 

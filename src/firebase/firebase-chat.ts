@@ -7,7 +7,7 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { chatObjectType } from "../types/chat";
+import { chatObjectType } from "../types/types";
 import { db } from "./firebase-config";
 
 export const createChat = async () => {
@@ -40,7 +40,7 @@ export const addChatToUser = async (
 export const setLastMessageToUserChat = async (
   userId: string,
   chatId: string,
-  lastMessage: string,
+  lastMessage: string
 ) => {
   const userChatDocRef = doc(db, "users", userId, "userChats", chatId);
 

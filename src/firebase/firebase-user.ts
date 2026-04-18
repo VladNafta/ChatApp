@@ -7,6 +7,7 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
+import { UserType } from "../types/types";
 import { db } from "./firebase-config";
 
 export const getUserIdByEmail = async (email: string) => {
@@ -27,13 +28,7 @@ export const getUserIdByEmail = async (email: string) => {
 //   name: string;
 // };
 
-export const addUserToDB = async (
-  userId: string,
-  user: {
-    userName: string;
-    email: string;
-  }
-) => {
+export const addUserToDB = async (userId: string, user: UserType) => {
   const userDocRef = doc(db, "users", userId);
   const userDoc = await getDoc(userDocRef);
 
