@@ -27,8 +27,10 @@ const MessageInput = ({ className }: MessageInputProps) => {
     setMessage(event.target.value);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSubmit = (
+    // event: FormEvent<HTMLFormElement>
+  ) => {
+    // event.preventDefault();
     if (message.trim() && user && user.uid && chatId && currentChatData) {
       dispatch(sendMessage(chatId, user.uid, message));
       setLastMessageToUserChat(user.uid, chatId, message);
@@ -43,7 +45,7 @@ const MessageInput = ({ className }: MessageInputProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className={`${classes.form} ${className}`}>
+    <form className={`${classes.form} ${className}`}>
       <div className={classes.icon}>
         <img src={image} alt="image" />
       </div>
@@ -63,7 +65,7 @@ const MessageInput = ({ className }: MessageInputProps) => {
         type="text"
         className={classes.input}
       />
-      <button type="submit" className={classes.btn} disabled={!message}>
+      <button onClick={handleSubmit} type="submit" className={classes.btn} disabled={!message}>
         <img src={sendImg} alt="send icon" />
       </button>
     </form>
