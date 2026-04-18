@@ -1,5 +1,5 @@
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import emojiImg from "../../assets/emoji.png";
 import image from "../../assets/img.png";
 import sendImg from "../../assets/send-icon.svg";
@@ -21,16 +21,20 @@ const MessageInput = ({ className }: MessageInputProps) => {
   const [message, setMessage] = useState("");
   const [openEmoji, setOpenEmoji] = useState(false);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const currentChatData = chats.find((chat) => chat.chatId === chatId);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
   };
 
-  const handleSubmit = (
-    // event: FormEvent<HTMLFormElement>
-  ) => {
-    // event.preventDefault();
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+    
+    event.preventDefault();
     if (message.trim() && user && user.uid && chatId && currentChatData) {
       dispatch(sendMessage(chatId, user.uid, message));
       setLastMessageToUserChat(user.uid, chatId, message);
@@ -45,7 +49,7 @@ const MessageInput = ({ className }: MessageInputProps) => {
   };
 
   return (
-    <form className={`${classes.form} ${className}`}>
+    <form onSubmit={handleSubmit} className={`${classes.form} ${className}`}>
       <div className={classes.icon}>
         <img src={image} alt="image" />
       </div>
@@ -64,8 +68,9 @@ const MessageInput = ({ className }: MessageInputProps) => {
         onChange={handleChange}
         type="text"
         className={classes.input}
+        ref={inputRef}
       />
-      <button onClick={handleSubmit} type="submit" className={classes.btn} disabled={!message}>
+      <button type="submit" className={classes.btn} disabled={!message}>
         <img src={sendImg} alt="send icon" />
       </button>
     </form>
