@@ -70,7 +70,7 @@ const MessageInput = ({ className }: MessageInputProps) => {
         className={classes.input}
         ref={inputRef}
       />
-      <button type="submit" className={classes.btn} disabled={!message}>
+      <button type="submit" className={classes.btn}>
         <img src={sendImg} alt="send icon" />
       </button>
     </form>
