@@ -5,6 +5,8 @@ import classes from "./SignUp.module.css";
 
 import { useAppDispatch } from "../../hooks/redux-custom-hooks.js";
 import { createUserWithEmail } from "../../store/auth/auth-actions.js";
+import { setVerificationMessage } from "../../store/auth/auth-slice.js";
+import { store } from "../../store/store.js";
 
 interface ErrorState {
   [key: string]: string;
@@ -14,7 +16,7 @@ const SignUp = () => {
   const dispatch = useAppDispatch();
   const [error, setError] = useState<ErrorState>({});
 
-  async function handleSubmitForm(event: FormEvent<HTMLFormElement>) {
+  const handleSubmitForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     setError({});
@@ -47,14 +49,23 @@ const SignUp = () => {
       }));
       return;
     }
-    dispatch(
+    await dispatch(
       createUserWithEmail({
         userName: data.userName,
         email: data.email,
         password: data.password,
       })
     );
-  }
+
+    const authError = store.getState().auth.error;
+    if (!authError) {
+      dispatch(
+        setVerificationMessage(
+          "We have sent you a confirmation email. Please confirm your email and log in."
+        )
+      );
+    }
+  };
 
   return (
     <>

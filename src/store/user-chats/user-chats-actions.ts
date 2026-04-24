@@ -13,6 +13,7 @@ import { setError, setLoading, setUserChats } from "./user-chats-slice";
 export const subscribeToUserChats =
   (userId: string) => (dispatch: AppDispatch) => {
     dispatch(setLoading(true));
+    dispatch(setError(""));
 
     const userChatsCollectionRef = collection(db, "users", userId, "userChats");
 

@@ -6,10 +6,10 @@ import "./index.css";
 import HomePage from "./pages/Home/Home";
 import { store } from "./store/store";
 
-import SignUp from "./pages/SignUp/SignUp";
-import LogIn from "./pages/LogIn/LogIn";
 import ChatPage from "./pages/Chat/Chat";
 import HeaderLayout from "./pages/HeaderLayout/HeaderLayout";
+import LogIn from "./pages/LogIn/LogIn";
+import SignUp from "./pages/SignUp/SignUp";
 
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>

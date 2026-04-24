@@ -23,13 +23,9 @@ export const getUserIdByEmail = async (email: string) => {
   return usersId;
 };
 
-// type UserData = {
-//   email: string;
-//   name: string;
-// };
-
 export const addUserToDB = async (userId: string, user: UserType) => {
   const userDocRef = doc(db, "users", userId);
+  
   const userDoc = await getDoc(userDocRef);
 
   if (userDoc.exists()) {

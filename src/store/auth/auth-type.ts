@@ -1,12 +1,12 @@
-import { UserType } from "../../types/types";
-
 export type AuthUserType = {
   uid: string;
+  email: string | null;
   emailVerified: boolean;
-} & UserType;
+};
 
 export type AuthStateType = {
   user: AuthUserType | null;
   loading: boolean;
   error: string;
+  verificationMessage: string;
 };

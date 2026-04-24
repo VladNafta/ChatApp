@@ -1,15 +1,22 @@
 import { Outlet, useLocation, useNavigate } from "react-router";
 import classes from "./HeaderLayout.module.css";
 
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import Header from "../../components/Header/Header";
+import Modal from "../../components/UI/Modal/Modal";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-custom-hooks";
 import { watchAuthState } from "../../store/auth/auth-actions";
+import { setVerificationMessage } from "../../store/auth/auth-slice";
 
 const HeaderLayout = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { pathname } = useLocation();
+
+  const verificationMessage = useAppSelector(
+    (state) => state.auth.verificationMessage
+  );
+  const { user, loading } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     const unsubscribe = dispatch(watchAuthState());
@@ -17,16 +24,13 @@ const HeaderLayout = () => {
     return () => unsubscribe();
   }, []);
 
-  const { user, loading } = useAppSelector((state) => state.auth);
-
-  useEffect(() => {
-    console.log(user?.emailVerified);
-    if (!loading && !user?.emailVerified && pathname !== "/sign-up") {
-      navigate("/log-in");
-    } else if (user) {
+  useLayoutEffect(() => {
+    if (!loading && !!user?.emailVerified) {
       navigate("/chat");
+    } else if (!loading && !user && pathname == "/chat") {
+      navigate("/log-in");
     }
-  }, [loading, user?.emailVerified, navigate]);
+  }, [loading, user, navigate]);
 
   if (loading) {
     return (
@@ -40,8 +44,16 @@ const HeaderLayout = () => {
   return (
     <div className="container">
       <Header />
-
       <Outlet />
+      <Modal
+        open={!!verificationMessage}
+        text={verificationMessage}
+        buttonText="Ok"
+        onClose={() => {
+          if (pathname == "/sign-up") navigate("/log-in");
+          dispatch(setVerificationMessage(""));
+        }}
+      />
     </div>
   );
 };

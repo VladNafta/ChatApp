@@ -46,7 +46,6 @@ const ChatArea = ({ className = "" }) => {
   }, [messages]);
 
   useEffect(() => {
-    console.log(chatId);
     if (
       firstMessageRef.current === null ||
       chatId === null ||

@@ -2,14 +2,13 @@ import { Link, useLocation } from "react-router";
 
 import defaultAvatar from "../../assets/default-avatar2.jpg";
 import logo from "../../assets/logo.svg";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux-custom-hooks";
+import { useAppDispatch } from "../../hooks/redux-custom-hooks";
 import { logOut } from "../../store/auth/auth-actions";
 import classes from "./Header.module.css";
 
 export default function Header() {
   const { pathname } = useLocation();
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.auth.user);
 
   const handleLogOut = () => {
     dispatch(logOut());

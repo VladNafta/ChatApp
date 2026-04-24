@@ -63,7 +63,7 @@ const MessageInput = ({ className }: MessageInputProps) => {
         <img src={emojiImg} alt="emoji" />
       </div>
       <input
-        placeholder="massage"
+        placeholder="message"
         value={message}
         onChange={handleChange}
         type="text"

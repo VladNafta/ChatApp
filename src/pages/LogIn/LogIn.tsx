@@ -4,6 +4,8 @@ import Input from "../../components/UI/Input/Input";
 
 import { useAppDispatch } from "../../hooks/redux-custom-hooks";
 import { signInUserWithEmail } from "../../store/auth/auth-actions";
+import { setVerificationMessage } from "../../store/auth/auth-slice";
+import { store } from "../../store/store";
 import classes from "./LogIn.module.css";
 
 const LogIn = () => {
@@ -26,13 +28,18 @@ const LogIn = () => {
       });
       return;
     }
-
-    dispatch(
+    await dispatch(
       signInUserWithEmail({
         email: data.email,
         password: data.password,
       })
     );
+    
+    const authError = store.getState().auth.error;
+    const user = store.getState().auth.user;
+
+    if (user?.email === data.email && !user?.emailVerified && !authError)
+      dispatch(setVerificationMessage("Your email is not confirmed."));
   };
 
   return (

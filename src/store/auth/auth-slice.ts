@@ -5,6 +5,7 @@ const initialState: AuthStateType = {
   user: null,
   loading: false,
   error: "",
+  verificationMessage: "",
 };
 
 const authSlice = createSlice({
@@ -16,9 +17,13 @@ const authSlice = createSlice({
     },
 
     setUserEmailVerified: (state, action: PayloadAction<boolean>) => {
-      if( state.user){
+      if (state.user) {
         state.user.emailVerified = action.payload;
       }
+    },
+
+    setVerificationMessage: (state, action: PayloadAction<string>) => {
+      state.verificationMessage = action.payload;
     },
 
     setLoading: (state, action: PayloadAction<boolean>) => {
@@ -31,5 +36,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUser, setUserEmailVerified,setLoading, setError } = authSlice.actions;
+export const { setUser, setUserEmailVerified, setVerificationMessage, setLoading, setError } =
+  authSlice.actions;
 export default authSlice.reducer;
