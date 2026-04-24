@@ -17,7 +17,7 @@ createRoot(document.getElementById("root")!).render(
       <StrictMode>
         <Routes>
           <Route element={<HeaderLayout />}>
-            <Route index element={<HomePage />} />
+            <Route index element={<Navigate to="/log-in" />} />
             <Route path="/log-in" element={<LogIn />} />
             <Route path="/sign-up" element={<SignUp />} />
             <Route path="/chat" element={<ChatPage />} />
