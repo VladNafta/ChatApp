@@ -1,4 +1,3 @@
-
 .li {
   flex: 1;
   display: flex;
@@ -55,4 +54,10 @@
 
 .selected {
   background: var(--sp-blue-500);
+}
+
+@media (hover: none) {
+  .li:hover {
+    background: inherit;
+  }
 }
