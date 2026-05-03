@@ -20,7 +20,6 @@ interface AuthFormProps {
   offerButtonText: string;
   offerLink: string;
 }
-
 const AuthForm = ({
   title,
   descriptions,
@@ -40,14 +39,21 @@ const AuthForm = ({
   };
 
   let messageText = "";
-  if (authError === "Firebase: Error (auth/too-many-requests).") {
-    messageText = "Too many requests.";
-  } else if (authError === "Firebase: Error (auth/email-already-in-use).") {
-    messageText = "This account already in use.";
-  } else if (authError === "Firebase: Error (auth/invalid-credential).") {
-    messageText = "Invalid credential";
-  } else messageText = authError;
-
+  
+  switch (authError) {
+    case "Firebase: Error (auth/too-many-requests).":
+      messageText = "Too many requests.";
+      break;
+    case "Firebase: Error (auth/email-already-in-use).":
+      messageText = "This account already in use.";
+      break;
+    case "Firebase: Error (auth/invalid-credential).":
+      messageText = "Invalid credential";
+      break;
+    default:
+      messageText = authError;
+      break;
+  }
   const handleOnSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
     onSubmit(event);
   };

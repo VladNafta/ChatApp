@@ -1,4 +1,4 @@
-import { UserType } from "../../types/types";
+import { UserType } from "../../types/dbTypes";
 
 export type UserStateType = {
   user: UserType | null;

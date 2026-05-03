@@ -1,5 +1,7 @@
-.chat-item {
-  display: inline-flex;
+
+.li {
+  flex: 1;
+  display: flex;
   padding: 0.5rem 0.5rem;
   align-items: center;
   gap: 0.6rem;
@@ -7,11 +9,11 @@
   cursor: pointer;
 }
 
-.chat-item:hover {
+.li:hover {
   background: var(--sp-blue-500);
 }
 
-.chat-item img {
+.li img {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
@@ -43,7 +45,7 @@
   text-overflow: ellipsis;
 }
 
-.time{
+.time {
   color: var(--sp-blue-300);
   font-size: 0.6rem;
   font-weight: 500;

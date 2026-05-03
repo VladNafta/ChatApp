@@ -7,32 +7,55 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { chatObjectType } from "../types/types";
+import { ExtendedUserChatType } from "../store/user-chats/user-chats-type";
+import {
+  ChatType,
+  GroupChatType,
+  UserChatType,
+  UserType,
+} from "../types/dbTypes";
 import { db } from "./firebase-config";
 
-export const createChat = async () => {
-  const chatsCollectionRef = collection(db, "chats");
-  const responseCreateChat = await addDoc(chatsCollectionRef, {
+export const createDirectChat = async (participants: string[]) => {
+  const chatsCollectionRef = collection(db, "directChats");
+  const responseCreatedChat = await addDoc(chatsCollectionRef, {
+    created: new Date(),
+    participants,
+  });
+  return responseCreatedChat.id;
+};
+
+export const createGroupChat = async (
+  adminId: string,
+  groupName: string,
+  participants: string[],
+  photoURL: string | null
+) => {
+  const chatsCollectionRef = collection(db, "groupChats");
+  const responseCreatedChat = await addDoc(chatsCollectionRef, {
+    adminId,
+    groupName,
+    participants,
+    photoURL,
     created: new Date(),
   });
-  return responseCreateChat.id;
+  return responseCreatedChat.id;
 };
 
 export const addChatToUser = async (
   userId: string,
-  receiverId: string,
-  chatId: string
+  participants: string[],
+  chatId: string,
+  chatType: ChatType
 ) => {
-  console.log("start");
-
   const userChatDocRef = doc(db, "users", userId, "userChats", chatId);
 
   await setDoc(userChatDocRef, {
     chatId,
-    receiverId,
+    participants,
     lastMessage: "",
     updatedAt: Date.now(),
-    isSeen: true,
+    chatType,
   });
   console.log("Документ чату створений.");
 };
@@ -46,17 +69,8 @@ export const setLastMessageToUserChat = async (
 
   await updateDoc(userChatDocRef, {
     updatedAt: Date.now(),
-    isSeen: true,
     lastMessage,
   });
-};
-
-type ChatObjectType = {
-  chatId: string;
-  receiverId: string;
-  lastMessage: string;
-  updatedAt: number;
-  isSeen: boolean;
 };
 
 export const getUserChats = async (userId: string) => {
@@ -64,8 +78,8 @@ export const getUserChats = async (userId: string) => {
 
   const querySnapshot = await getDocs(userChatsRef);
 
-  const chatsArray: ChatObjectType[] = querySnapshot.docs.map(
-    (doc) => doc.data() as ChatObjectType
+  const chatsArray = querySnapshot.docs.map(
+    (doc) => doc.data() as UserChatType
   );
 
   if (chatsArray.length === 0) {
@@ -75,29 +89,70 @@ export const getUserChats = async (userId: string) => {
   return chatsArray;
 };
 
-export const convertUserChats = async (chatsArray: chatObjectType[]) => {
+export const convertDirectChat = async (
+  userId: string,
+  chat: UserChatType
+): Promise<ExtendedUserChatType | null> => {
+  const receiverId = chat.participants.find((id) => userId !== id);
+  if (!receiverId) {
+    return null;
+  }
+
+  const userDocRef = doc(db, "users", receiverId);
+  const userDoc = await getDoc(userDocRef);
+
+  if (!userDoc.exists()) {
+    return null;
+  }
+
+  // !!!!!!!!
+  const userData = userDoc.data() as UserType;
+  // !!!!!!!! should log
+  return {
+    chatId: chat.chatId,
+    chatType: chat.chatType,
+    name: userData.name,
+    photoURL: userData.photoURL,
+    participants: chat.participants,
+    lastMessage: chat.lastMessage,
+    updatedAt: chat.updatedAt,
+  };
+};
+
+export const convertGroupChat = async (
+  chat: UserChatType
+): Promise<ExtendedUserChatType | null> => {
+  const groupChatDocRef = doc(db, "groupChats", chat.chatId);
+  const groupChatDoc = await getDoc(groupChatDocRef);
+
+  if (!groupChatDoc.exists()) {
+    return null;
+  }
+
+  const groupChatData = groupChatDoc.data() as GroupChatType;
+
+  return {
+    chatId: chat.chatId,
+    chatType: chat.chatType,
+    name: groupChatData.groupName,
+    photoURL: groupChatData.photoURL,
+    participants: chat.participants,
+    lastMessage: chat.lastMessage,
+    updatedAt: chat.updatedAt,
+  };
+};
+
+export const convertUserChats = async (
+  userId: string,
+  chatsArray: UserChatType[]
+) => {
   const newChats = await Promise.all(
     chatsArray.map(async (chat) => {
-      const userDocRef = doc(db, "users", chat.receiverId);
-      const userDoc = await getDoc(userDocRef);
-
-      if (!userDoc.exists()) {
-        return null;
-      }
-
-      const userData = userDoc.data();
-      const email: string = userData.email;
-      const userName: string = userData.userName;
-
-      return {
-        chatId: chat.chatId,
-        email,
-        userName,
-        receiverId: chat.receiverId,
-        lastMessage: chat.lastMessage,
-        updatedAt: chat.updatedAt,
-        isSeen: chat.isSeen,
-      };
+      if (chat.chatType === ChatType.DIRECT) {
+        return await convertDirectChat(userId, chat);
+      } else if (chat.chatType === ChatType.GROUP) {
+        return await convertGroupChat(chat);
+      } else return null;
     })
   );
   return newChats.filter((chat) => chat !== null);
@@ -117,9 +172,10 @@ export const checkIfChatExistsInUser = async (
     return false;
   }
 
-  const isChatExists = chatsArray.some(
-    (chat) => chat.receiverId === receiverId
-  );
+  const isChatExists = chatsArray.some((chat) => {
+    if (chat.chatType === ChatType.GROUP) return false;
+    chat.participants.some((userId) => userId === receiverId);
+  });
 
   return isChatExists;
 };

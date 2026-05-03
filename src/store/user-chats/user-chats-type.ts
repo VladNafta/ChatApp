@@ -1,27 +1,12 @@
+import { UserChatType } from "../../types/dbTypes";
+
 export type UserChatsStateType = {
-  chats: UserChatsType[];
+  chats: ExtendedUserChatType[];
   loading: boolean;
   error: string;
 };
 
-// export type ChatObjectType = {
-//   chatId: string;
-//   receiverId: string;
-//   lastMessage: string;
-//   updatedAt: string;
-//   isSeen: boolean;
-// };
-
-export type UserChatsType = {
-  chatId: string;
-  receiverId: string;
-  userName: string;
-  email: string;
-  lastMessage: string;
-  updatedAt: number;
-  isSeen: boolean;
+export type ExtendedUserChatType = UserChatType & {
+  name: string | null;
+  photoURL: string | null;
 };
-
-// export type ChatType = ChatObjectType & {
-//   email: string;
-// };

@@ -1,8 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ChatMessagesStateType, MessageObjectType } from "./chat-messages-type";
+import { ChatType } from "../../types/dbTypes";
+import {
+  ChatMessagesStateType,
+  ExtendedMessageType,
+} from "./chat-messages-type";
 
 const initialState: ChatMessagesStateType = {
   chatId: null,
+  chatType: null,
   messages: [],
   lastDocId: null,
   loading: false,
@@ -15,24 +20,32 @@ const chatMessageSlice = createSlice({
   reducers: {
     setChatId: (state, action: PayloadAction<string | null>) => {
       state.chatId = action.payload;
+      state.chatType = null;
       state.lastDocId = null;
       state.messages = [];
     },
 
-    setMessages: (state, action: PayloadAction<MessageObjectType[]>) => {
+    setChatType: (state, action: PayloadAction<ChatType | null>) => {
+      state.chatType = action.payload;
+    },
+
+    setMessages: (state, action: PayloadAction<ExtendedMessageType[]>) => {
       state.messages.push(...action.payload);
     },
 
     addPrevMessages: (
       state,
-      action: PayloadAction<{ messages: MessageObjectType[]; chatId: string }>
+      action: PayloadAction<{ messages: ExtendedMessageType[]; chatId: string }>
     ) => {
       if (state.chatId === action.payload.chatId) {
         state.messages.unshift(...action.payload.messages);
       }
     },
 
-    setLastDoc: (state, action:  PayloadAction<{ lastDocId: string; chatId: string }>) => {
+    setLastDoc: (
+      state,
+      action: PayloadAction<{ lastDocId: string; chatId: string }>
+    ) => {
       if (state.chatId === action.payload.chatId) {
         state.lastDocId = action.payload.lastDocId;
       }
@@ -50,6 +63,7 @@ const chatMessageSlice = createSlice({
 
 export const {
   setChatId,
+  setChatType,
   setMessages,
   addPrevMessages,
   setLastDoc,

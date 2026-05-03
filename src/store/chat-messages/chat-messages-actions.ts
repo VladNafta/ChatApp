@@ -11,7 +11,8 @@ import {
   startAfter,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
-import { AppDispatch } from "../store";
+import { ChatType } from "../../types/dbTypes";
+import { AppDispatch, RootState } from "../store";
 import {
   addPrevMessages,
   setError,
@@ -19,15 +20,32 @@ import {
   setLoading,
   setMessages,
 } from "./chat-messages-slice";
-import { MessageObjectType } from "./chat-messages-type";
+import { ExtendedMessageType } from "./chat-messages-type";
 
 const messagesLimit = 40;
 
 export const subscribeToChatMessages =
-  (chatId: string) => (dispatch: AppDispatch) => {
+  (chatId: string) => (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch(setLoading(true));
-    const messagesCollectionRef = collection(db, "chats", chatId, "messages");
 
+    const chatType = getState().chatMessages.chatType;
+    let chatCollectionName: string;
+    switch (chatType) {
+      case ChatType.DIRECT:
+        chatCollectionName = "directChats";
+        break;
+      case ChatType.GROUP:
+        chatCollectionName = "groupChats";
+        break;
+      default:
+        throw new Error(`Невідомий тип чату: ${chatType}`);
+    }
+    const messagesCollectionRef = collection(
+      db,
+      chatCollectionName,
+      chatId,
+      "messages"
+    );
     const messagesQuery = query(
       messagesCollectionRef,
       orderBy("createdAt", "desc"),
@@ -43,7 +61,13 @@ export const subscribeToChatMessages =
           const messageArray = collectionSnap
             .docChanges()
             .filter((change) => change.type === "added")
-            .map((change) => change.doc.data() as MessageObjectType);
+            .map(
+              (change) =>
+                ({
+                  messageId: change.doc.id,
+                  ...change.doc.data(),
+                } as ExtendedMessageType)
+            );
 
           messageArray.reverse();
           dispatch(setMessages(messageArray));
@@ -74,43 +98,41 @@ export const subscribeToChatMessages =
     return unsubscribe;
   };
 
-export const sendMessage =
-  (chatId: string, senderId: string, text: string) =>
-  async (dispatch: AppDispatch) => {
-    dispatch(setLoading(true));
-    try {
-      const chatMessagesCollectionRef = collection(
-        db,
-        "chats",
-        chatId,
-        "messages"
-      );
-      const newMessage = {
-        chatId,
-        senderId,
-        text,
-        createdAt: Date.now(),
-      };
-
-      const response = await addDoc(chatMessagesCollectionRef, newMessage);
-      return response.id;
-    } catch (error: any) {
-      dispatch(setError(String(error.message)));
-      console.error("Помилка надсилання повідомлення:", error.message);
-    } finally {
-      dispatch(setLoading(false));
-    }
-  };
-
 export const downloadPrevMessages =
-  (chatId: string, lastDocId: string) => async (dispatch: AppDispatch) => {
+  (chatId: string, lastDocId: string) =>
+  async (dispatch: AppDispatch, getState: () => RootState) => {
     try {
       dispatch(setLoading(true));
 
-      const lastDocRef = doc(db, "chats", chatId, "messages", lastDocId);
+      const chatType = getState().chatMessages.chatType;
+      let chatCollectionName: string;
+
+      switch (chatType) {
+        case ChatType.DIRECT:
+          chatCollectionName = "directChats";
+          break;
+        case ChatType.GROUP:
+          chatCollectionName = "groupChats";
+          break;
+        default:
+          throw new Error(`Невідомий тип чату: ${chatType}`);
+      }
+
+      const lastDocRef = doc(
+        db,
+        chatCollectionName,
+        chatId,
+        "messages",
+        lastDocId
+      );
       const lastDocSnap = await getDoc(lastDocRef);
 
-      const messagesCollectionRef = collection(db, "chats", chatId, "messages");
+      const messagesCollectionRef = collection(
+        db,
+        chatCollectionName,
+        chatId,
+        "messages"
+      );
 
       const prevMessagesQuery = query(
         messagesCollectionRef,
@@ -126,7 +148,13 @@ export const downloadPrevMessages =
             messages: querySnapshot
               .docChanges()
               .filter((change) => change.type === "added")
-              .map((change) => change.doc.data() as MessageObjectType)
+              .map(
+                (change) =>
+                  ({
+                    messageId: change.doc.id,
+                    ...change.doc.data(),
+                  } as ExtendedMessageType)
+              )
               .reverse(),
             chatId,
           })
@@ -145,6 +173,56 @@ export const downloadPrevMessages =
         error.message
       );
       dispatch(setError(error.message));
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+export const sendMessage =
+  (
+    chatId: string,
+    senderId: string,
+    senderName: string,
+    senderPhotoURL: string,
+    text: string
+  ) =>
+  async (dispatch: AppDispatch, getState: () => RootState) => {
+    dispatch(setLoading(true));
+
+    const chatType = getState().chatMessages.chatType;
+    try {
+      let chatCollectionName: string;
+
+      switch (chatType) {
+        case ChatType.DIRECT:
+          chatCollectionName = "directChats";
+          break;
+        case ChatType.GROUP:
+          chatCollectionName = "groupChats";
+          break;
+        default:
+          throw new Error(`Невідомий тип чату: ${chatType}`);
+      }
+      const messagesCollectionRef = collection(
+        db,
+        chatCollectionName,
+        chatId,
+        "messages"
+      );
+      const newMessage = {
+        chatId,
+        senderId,
+        senderName,
+        senderPhotoURL,
+        text,
+        createdAt: Date.now(),
+      };
+
+      const response = await addDoc(messagesCollectionRef, newMessage);
+      return response.id;
+    } catch (error: any) {
+      dispatch(setError(String(error.message)));
+      console.error("Помилка надсилання повідомлення:", error.message);
     } finally {
       dispatch(setLoading(false));
     }

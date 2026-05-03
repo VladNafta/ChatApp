@@ -7,6 +7,7 @@ import Modal from "../../components/UI/Modal/Modal";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-custom-hooks";
 import { watchAuthState } from "../../store/auth/auth-actions";
 import { setVerificationMessage } from "../../store/auth/auth-slice";
+import { subscribeToUserData } from "../../store/user/user-actions";
 
 const HeaderLayout = () => {
   const navigate = useNavigate();
@@ -16,6 +17,9 @@ const HeaderLayout = () => {
   const verificationMessage = useAppSelector(
     (state) => state.auth.verificationMessage
   );
+
+  const userIdAuth = useAppSelector((state) => state.auth.user?.uid);
+
   const { user, loading } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
@@ -23,6 +27,13 @@ const HeaderLayout = () => {
 
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (!userIdAuth) return;
+    const unsubscribe = dispatch(subscribeToUserData(userIdAuth));
+
+    return () => unsubscribe();
+  }, [userIdAuth]);
 
   useLayoutEffect(() => {
     if (!loading && !!user?.emailVerified) {

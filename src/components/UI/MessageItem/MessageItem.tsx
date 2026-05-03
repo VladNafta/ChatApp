@@ -1,10 +1,11 @@
 import classes from "./MessageItem.module.css";
 
-interface MessageProps {
+interface MessageItemProps {
   text: string;
+  src?:string;
   className?: string;
   ref: React.Ref<HTMLLIElement>;
-  isSenderMessage: boolean;
+  isYourMessage: boolean;
   createdAt: number;
 }
 
@@ -12,16 +13,16 @@ const MessageItem = ({
   text,
   className = "",
   ref,
-  isSenderMessage,
+  isYourMessage,
   createdAt,
-}: MessageProps) => {
+}: MessageItemProps) => {
   const date = new Date(createdAt);
   const hours = date.getHours().toString().padStart(2, "0");
   const minutes = date.getMinutes().toString().padStart(2, "0");
 
   let messageClass = `${classes.message} ${className}`;
-  if (isSenderMessage) {
-    messageClass += classes["sender-message"];
+  if (isYourMessage) {
+    messageClass += classes["your-message"];
   }
   return (
     <li ref={ref} className={messageClass}>

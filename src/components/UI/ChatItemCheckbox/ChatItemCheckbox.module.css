@@ -1,0 +1,16 @@
+.box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.box span {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #333;
+  border-radius: 50%;
+}
+
+.selected{
+  background-color: var(--sp-blue);
+}

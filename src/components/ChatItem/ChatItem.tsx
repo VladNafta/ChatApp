@@ -3,11 +3,11 @@ import classes from "./ChatItem.module.css";
 interface ChatItemProps {
   chatId: string;
   selectedChatId: string | null;
-  name: string;
+  name: string | null;
   text: string;
   src: string;
   className?: string;
-  onClick: () => void;
+  onClick?: () => void;
   updatedAt: number;
 }
 
@@ -21,7 +21,7 @@ const ChatItem = ({
   onClick,
   updatedAt,
 }: ChatItemProps) => {
-  let liClass = `${classes["chat-item"]} ${className}`;
+  let liClass = `${classes.li} ${className}`;
   if (chatId === selectedChatId) {
     liClass += ` ${classes.selected}`;
   }
@@ -35,7 +35,7 @@ const ChatItem = ({
   } else {
     dateToDisplay = date.toLocaleDateString();
   }
-  
+
   return (
     <li onClick={onClick} className={liClass}>
       <img src={src} alt={`${name} img`} />

@@ -1,18 +1,18 @@
 import backArrow from "../../assets/back-arrow.png";
-import defaultAvatar from "../../assets/default-avatar2.jpg";
-import infoIcon from "../../assets/more-info-icon.svg";
+import infoIcon from "../../assets/info-icon.svg";
 import { useAppDispatch } from "../../hooks/redux-custom-hooks";
 import { setChatId } from "../../store/chat-messages/chat-messages-slice";
 
 import classes from "./ChatHeader.module.css";
 
 interface MessagesHeaderProps {
-  name: string | null;
+  name: string;
   description: string;
+  src: string;
   className?: string;
 }
 
-const ChatsHeader = ({ name, description, className }: MessagesHeaderProps) => {
+const ChatsHeader = ({ name, description, src, className }: MessagesHeaderProps) => {
   const dispatch = useAppDispatch();
 
   const handleBackToSidebar = () => {
@@ -33,9 +33,9 @@ const ChatsHeader = ({ name, description, className }: MessagesHeaderProps) => {
         />
       </button>
       <div className={classes.box}>
-        <img className={classes.avatar} src={defaultAvatar} alt="avatar" />
+        <img className={classes.avatar} src={src} alt="avatar" />
         <div className={classes.text}>
-          <h3>{name === null ? "No one user selected" : name}</h3>
+          <h3>{name}</h3>
           {/* <p>{description}</p> */}
         </div>
       </div>

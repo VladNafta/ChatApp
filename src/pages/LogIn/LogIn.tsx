@@ -48,7 +48,7 @@ const LogIn = () => {
         className={classes.form}
         title="Log in to your account"
         descriptions="Welcome back! Please enter your details."
-        textSubmitBtn="Sign in"
+        textSubmitBtn="Log in"
         onSubmit={handleSubmitForm}
         offerText="Don’t have an account?"
         offerButtonText="Sign up"

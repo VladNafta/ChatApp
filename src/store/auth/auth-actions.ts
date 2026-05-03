@@ -53,7 +53,7 @@ export const logInWithGoogle = () => async (dispatch: AppDispatch) => {
     const response = await signInWithPopup(auth, googleProvider);
 
     const user = {
-      userName: response.user.displayName,
+      name: response.user.displayName,
       email: response.user.email,
       phoneNumber: response.user.phoneNumber,
       photoURL: response.user.photoURL,
@@ -81,7 +81,7 @@ export const createUserWithEmail =
       );
 
       const user = {
-        userName: userData.userName,
+        name: userData.userName,
         email: response.user.email,
         phoneNumber: response.user.phoneNumber,
         photoURL: response.user.photoURL,

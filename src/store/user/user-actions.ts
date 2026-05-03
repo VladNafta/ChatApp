@@ -1,6 +1,6 @@
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
-import { UserType } from "../../types/types";
+import { UserType } from "../../types/dbTypes";
 import { AppDispatch } from "../store";
 import { setError, setLoading, setUser } from "./user-slice";
 
@@ -14,7 +14,7 @@ export const subscribeToUserData =
     const unsubscribe = onSnapshot(
       userChatsCollectionRef,
       async (docSnap) => {
-        if (!docSnap.exists) {
+        if (docSnap.exists()) {
           const userData = docSnap.data() as UserType;
 
           dispatch(setUser(userData));
@@ -33,15 +33,15 @@ export const subscribeToUserData =
     return unsubscribe;
   };
 
-  export const updateUserField =
-  (userId: string, field: string, value: string) => async (dispatch: AppDispatch) => {
+export const updateUserField =
+  (userId: string, field: string, value: string) =>
+  async (dispatch: AppDispatch) => {
     try {
       dispatch(setLoading(true));
       dispatch(setError(""));
 
       const userDocRef = doc(db, "users", userId);
       await updateDoc(userDocRef, { [field]: value });
-
     } catch (error: any) {
       dispatch(setError(String(error.message)));
       console.error(`Помилка оновлення поля ${field}: `, error.message);
@@ -49,4 +49,3 @@ export const subscribeToUserData =
       dispatch(setLoading(false));
     }
   };
-
