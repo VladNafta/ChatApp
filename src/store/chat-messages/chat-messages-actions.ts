@@ -11,7 +11,7 @@ import {
   startAfter,
 } from "firebase/firestore";
 import { db } from "../../firebase/firebase-config";
-import { ChatType } from "../../types/dbTypes";
+import { ChatType, GroupChatType, UserType } from "../../types/dbTypes";
 import { AppDispatch, RootState } from "../store";
 import {
   addPrevMessages,
@@ -19,6 +19,7 @@ import {
   setLastDoc,
   setLoading,
   setMessages,
+  setUsers,
 } from "./chat-messages-slice";
 import { ExtendedMessageType } from "./chat-messages-type";
 
@@ -179,13 +180,7 @@ export const downloadPrevMessages =
   };
 
 export const sendMessage =
-  (
-    chatId: string,
-    senderId: string,
-    senderName: string,
-    senderPhotoURL: string,
-    text: string
-  ) =>
+  (chatId: string, senderId: string, text: string) =>
   async (dispatch: AppDispatch, getState: () => RootState) => {
     dispatch(setLoading(true));
 
@@ -212,8 +207,6 @@ export const sendMessage =
       const newMessage = {
         chatId,
         senderId,
-        senderName,
-        senderPhotoURL,
         text,
         createdAt: Date.now(),
       };
@@ -223,6 +216,47 @@ export const sendMessage =
     } catch (error: any) {
       dispatch(setError(String(error.message)));
       console.error("Помилка надсилання повідомлення:", error.message);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+export const getUsersInGroupChat =
+  (chatId: string) =>
+  async (dispatch: AppDispatch) => {
+    dispatch(setLoading(true));
+    try {
+      const chatDocRef = doc(db, "groupChats", chatId);
+      const chatDocSnap = await getDoc(chatDocRef);
+
+      if (!chatDocSnap.exists()) {
+        throw new Error("Чат не знайдено");
+      }
+
+      const chatData = chatDocSnap.data() as GroupChatType;
+      const participants = chatData.participants;
+
+      const usersData = await Promise.all(
+        participants.map(async (userId) => {
+          const userDocRef = doc(db, "users", userId);
+          const userDocSnap = await getDoc(userDocRef);
+          if (!userDocSnap.exists()) return null;
+          const userData = userDocSnap.data() as UserType;
+          return { userId, ...userData };
+        })
+      );
+
+      const result = usersData.reduce<Record<string, UserType>>((acc, user) => {
+        if (user) {
+          acc[user.userId] = user;
+        }
+        return acc;
+      }, {});
+
+      dispatch(setUsers(result));
+    } catch (error: any) {
+      dispatch(setError(error.message));
+      console.error("Помилка отримання користувачів:", error.message);
     } finally {
       dispatch(setLoading(false));
     }

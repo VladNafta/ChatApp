@@ -4,8 +4,10 @@ import defaultAvatar from "../../assets/default-avatar2.jpg";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-custom-hooks";
 import {
   downloadPrevMessages,
+  getUsersInGroupChat,
   subscribeToChatMessages,
 } from "../../store/chat-messages/chat-messages-actions";
+import { ChatType } from "../../types/dbTypes";
 import ChatHeader from "../ChatHeader/ChatHeader";
 import MessageInput from "../MessageInput/MessageInput";
 import GroupMessageItem from "../UI/GroupMessageItem/GroupMessageItem";
@@ -16,10 +18,14 @@ const ChatArea = ({ className = "" }) => {
   const dispatch = useAppDispatch();
   const chats = useAppSelector((state) => state.userChats.chats);
   const user = useAppSelector((state) => state.auth.user);
-  const messages = useAppSelector((state) => state.chatMessages.messages);
-  const lastDocId = useAppSelector((state) => state.chatMessages.lastDocId);
-  const messagesLoading = useAppSelector((state) => state.chatMessages.loading);
-  const chatId = useAppSelector((state) => state.chatMessages.chatId);
+  const {
+    chatId,
+    messages,
+    chatType,
+    users,
+    lastDocId,
+    loading: messagesLoading,
+  } = useAppSelector((state) => state.chatMessages);
 
   const isDownloadedNewMessageRef = useRef(false);
   const firstMessageRef = useRef<HTMLLIElement>(null);
@@ -30,14 +36,25 @@ const ChatArea = ({ className = "" }) => {
     () => chats.find((chat) => chat.chatId === chatId),
     [chatId]
   );
-
+  
   useEffect(() => {
     if (!chatId) return;
-
-    const unsubscribe = dispatch(subscribeToChatMessages(chatId));
-
-    return () => unsubscribe();
+  
+    let unsubscribe: (() => void) | undefined;
+  
+    (async () => {
+      if (chatType === ChatType.GROUP) {
+        await dispatch(getUsersInGroupChat(chatId));
+      }
+  
+      unsubscribe = dispatch(subscribeToChatMessages(chatId));
+    })();
+  
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [chatId]);
+  
 
   useEffect(() => {
     if (lastMessageRef.current && !isDownloadedNewMessageRef.current) {
@@ -97,13 +114,15 @@ const ChatArea = ({ className = "" }) => {
           <ul className={classes.ul} onScroll={(e) => e.preventDefault()}>
             {messages.map((message, index, array) => {
               prevFirstMessageRef.current = firstMessageRef.current;
-              if (user?.uid !== message.senderId)
+              if (user?.uid !== message.senderId && chatType === ChatType.GROUP)
                 return (
                   <GroupMessageItem
-                    senderName={message.senderName}
-                    isPhotoShow={array[index+1]?.senderId !== message.senderId}
-                    isNameShow={array[index-1]?.senderId !== message.senderId}
-                    src={message.senderPhotoURL}
+                    senderName={users?.[message.senderId]?.name ?? "Unknown"}
+                    isPhotoShow={
+                      array[index + 1]?.senderId !== message.senderId
+                    }
+                    isNameShow={array[index - 1]?.senderId !== message.senderId}
+                    src={users?.[message.senderId]?.name ?? defaultAvatar}
                     key={message.messageId + message.createdAt}
                     ref={
                       index === 0
@@ -119,7 +138,7 @@ const ChatArea = ({ className = "" }) => {
               else
                 return (
                   <MessageItem
-                    src={message.senderPhotoURL}
+                    src={users?.[message.senderId]?.name ?? defaultAvatar}
                     isYourMessage={user?.uid === message.senderId}
                     key={message.messageId + message.createdAt}
                     ref={

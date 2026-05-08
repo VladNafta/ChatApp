@@ -35,7 +35,5 @@ export type MessageType = {
   chatId: string;
   createdAt: number;
   senderId: string;
-  senderName: string;
-  senderPhotoURL: string; 
   text: string;
 };

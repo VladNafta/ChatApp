@@ -46,11 +46,12 @@ const MessageInput = ({ className }: MessageInputProps) => {
       currentChatData &&
       receiverId
     ) {
-      dispatch(
-        sendMessage(chatId, userAuth.uid, user.name, user.photoURL, message)
-      );
-      setLastMessageToUserChat(userAuth.uid, chatId, message);
-      setLastMessageToUserChat(receiverId, chatId, message);
+      dispatch(sendMessage(chatId, userAuth.uid, message));
+
+      currentChatData.participants.forEach((id) => {
+        setLastMessageToUserChat(id, chatId, message);
+      });
+      
       console.log("Message sent:", message);
     }
     setMessage("");

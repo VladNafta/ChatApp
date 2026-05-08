@@ -61,7 +61,8 @@ const SidebarHeader = ({
     await dispatch(
       addNewGroupChatToUsers(user.uid, participants, null, enteredValue)
     );
-
+    
+    setSelectedUsers([]);
     setShow("");
     setEnteredValue(" ");
   };

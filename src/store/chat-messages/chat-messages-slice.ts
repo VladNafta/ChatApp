@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ChatType } from "../../types/dbTypes";
+import { ChatType, UserType } from "../../types/dbTypes";
 import {
   ChatMessagesStateType,
   ExtendedMessageType,
@@ -9,6 +9,7 @@ const initialState: ChatMessagesStateType = {
   chatId: null,
   chatType: null,
   messages: [],
+  users: null,
   lastDocId: null,
   loading: false,
   error: "",
@@ -23,6 +24,7 @@ const chatMessageSlice = createSlice({
       state.chatType = null;
       state.lastDocId = null;
       state.messages = [];
+      state.users = null;
     },
 
     setChatType: (state, action: PayloadAction<ChatType | null>) => {
@@ -51,6 +53,10 @@ const chatMessageSlice = createSlice({
       }
     },
 
+    setUsers: (state, action: PayloadAction<Record<string, UserType> | null>) => {
+      state.users = action.payload;
+    },
+
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
@@ -67,6 +73,7 @@ export const {
   setMessages,
   addPrevMessages,
   setLastDoc,
+  setUsers,
   setLoading,
   setError,
 } = chatMessageSlice.actions;
