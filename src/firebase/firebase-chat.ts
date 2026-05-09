@@ -105,9 +105,8 @@ export const convertDirectChat = async (
     return null;
   }
 
-  // !!!!!!!!
   const userData = userDoc.data() as UserType;
-  // !!!!!!!! should log
+
   return {
     chatId: chat.chatId,
     chatType: chat.chatType,
@@ -161,7 +160,7 @@ export const convertUserChats = async (
 export const checkIfChatExistsInUser = async (
   userId: string,
   receiverId: string
-) => {
+): Promise<boolean> => {
   if (userId === receiverId) {
     return true;
   }
@@ -174,7 +173,8 @@ export const checkIfChatExistsInUser = async (
 
   const isChatExists = chatsArray.some((chat) => {
     if (chat.chatType === ChatType.GROUP) return false;
-    chat.participants.some((userId) => userId === receiverId);
+
+    return chat.participants.some((participantId) => participantId === receiverId);
   });
 
   return isChatExists;
