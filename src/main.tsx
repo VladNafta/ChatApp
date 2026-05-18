@@ -13,7 +13,7 @@ import SignUp from "./pages/SignUp/SignUp";
 
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
-    <BrowserRouter basename="/ChatApp">
+    <BrowserRouter>
       <StrictMode>
         <Routes>
           <Route element={<HeaderLayout />}>
